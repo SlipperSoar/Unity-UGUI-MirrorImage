@@ -6,14 +6,13 @@ using UnityEditor.UI;
 [CustomEditor(typeof(MirrorImage))]
 public class MirrorImageEditor:ImageEditor
 {
-    SerializedProperty m_mirrorType;
+    SerializedProperty m_imageType;
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-
-        EditorGUILayout.PropertyField(m_mirrorType);
+        EditorGUILayout.PropertyField(m_imageType);
         serializedObject.ApplyModifiedProperties();
     }
    
@@ -21,8 +20,7 @@ public class MirrorImageEditor:ImageEditor
     protected override void OnEnable()
     {
         base.OnEnable();
-        m_mirrorType = serializedObject.FindProperty("m_mirrorType");
-        
+        m_imageType = serializedObject.FindProperty("m_imageResourceType");
     }
 }
 

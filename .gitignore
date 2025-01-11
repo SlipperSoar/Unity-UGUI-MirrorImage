@@ -1,0 +1,6 @@
+.idea/
+[Tt]emp/
+Library/
+*.sln
+obj/
+Logs/
