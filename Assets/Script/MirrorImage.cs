@@ -75,8 +75,8 @@ public class MirrorImage : Image
                 break;
             case Type.Filled:
                 // TODO
-                //GenerateFilledSprite(toFill, m_PreserveAspect);
-                base.OnPopulateMesh(toFill);
+                GenerateFilledSprite(toFill, preserveAspect);
+                // base.OnPopulateMesh(toFill);
                 break;
         }
     }
@@ -159,45 +159,6 @@ public class MirrorImage : Image
         vh.AddVert(new Vector3(v.z, v.y), color32, new Vector2(uv.z, uv.y));
         vh.AddTriangle(0, 1, 2);
         vh.AddTriangle(2, 3, 0);
-
-        // switch (mirrorType)
-        // {
-        //     /// 1,2,5
-        //     /// 0,3,4
-        //     case MirrorType.Horizontal:
-        //         vh.AddVert(new Vector3(v1.z, v1.y), color32, new Vector2(uv.x, uv.y));
-        //         vh.AddVert(new Vector3(v1.z, v1.w), color32, new Vector2(uv.x, uv.w));
-        //         vh.AddTriangle(3, 2, 5);
-        //         vh.AddTriangle(5, 4, 3);
-        //         break;
-        //     /// 4,5
-        //     /// 1,2
-        //     /// 0,3
-        //     case MirrorType.Vertical:
-        //         vh.AddVert(new Vector3(v1.x, v1.w), color32, new Vector2(uv.x, uv.y));
-        //         vh.AddVert(new Vector3(v1.z, v1.w), color32, new Vector2(uv.z, uv.y));
-        //         vh.AddTriangle(1, 4, 5);
-        //         vh.AddTriangle(5, 2, 1);
-        //         break;
-        //     /// 8,7,6
-        //     /// 1,2,5
-        //     /// 0,3,4
-        //     case MirrorType.Quarter:
-        //         vh.AddVert(new Vector3(v1.z, v1.y), color32, new Vector2(uv.x, uv.y));
-        //         vh.AddVert(new Vector3(v1.z, v.w), color32, new Vector2(uv.x, uv.w));
-        //         vh.AddTriangle(3, 2, 5);
-        //         vh.AddTriangle(5, 4, 3);
-        //         vh.AddVert(new Vector3(v1.z, v1.w), color32, new Vector2(uv.x, uv.y));
-        //         vh.AddVert(new Vector3(v.z, v1.w), color32, new Vector2(uv.z, uv.y));
-        //         vh.AddVert(new Vector3(v1.x, v1.w), color32, new Vector2(uv.x, uv.y));
-        //         vh.AddTriangle(6, 5, 2);
-        //         vh.AddTriangle(2, 7, 6);
-        //         vh.AddTriangle(7, 2, 1);
-        //         vh.AddTriangle(1, 8, 7);
-        //         break;
-        //     default:
-        //         break;
-        // }
         
         switch (imageResourceType)
         {
@@ -554,6 +515,17 @@ public class MirrorImage : Image
         return border;
     }
 
+    static void AddQuad(VertexHelper vertexHelper, Vector3[] quadPositions, Color32 color, Vector3[] quadUVs)
+    {
+        int startIndex = vertexHelper.currentVertCount;
+
+        for (int i = 0; i < 4; ++i)
+            vertexHelper.AddVert(quadPositions[i], color, quadUVs[i]);
+
+        vertexHelper.AddTriangle(startIndex, startIndex + 1, startIndex + 2);
+        vertexHelper.AddTriangle(startIndex + 2, startIndex + 3, startIndex);
+    }
+    
     static void AddQuad(VertexHelper vertexHelper, Vector2 posMin, Vector2 posMax, Color32 color, Vector2 uvMin, Vector2 uvMax)
     {
         //Debug.Log($"posMin:{posMin},posMax:{posMax},uvMin:{uvMin},uvMax:{uvMax}");
@@ -716,7 +688,7 @@ public class MirrorImage : Image
                     {
                         float x1 = xMin + i * tileWidth;
                         float x2 = xMin + (i + 1) * tileWidth;
-                        float x2e=x2;
+                        float x2e = x2;
                         if (x2 > xMax)
                         {
                             clipped.x = uvMin.x + (uvMax.x - uvMin.x) * (xMax - x1) / (x2 - x1);
@@ -726,10 +698,12 @@ public class MirrorImage : Image
                         var uvMin1 = uvMin;
                         var clipped1 = clipped;
                         //Debug.Log("i::" + i + "  j:::" + j);
+                        // 由于原本Image就是基于左下角的平铺，所以这里就不做处理了
                         switch (imageResourceType)
                         {
                             case ImageType.LeftHalf:
                             case ImageType.RightHalf:
+                            {
                                 if (i % 2 == 1)
                                 {
                                     float offsetX = 0;
@@ -737,13 +711,16 @@ public class MirrorImage : Image
                                     {
                                         offsetX = uvMax.x - (uvMax.x - uvMin.x) * (xMax - x1) / (x2e - x1);
                                     }
+
                                     uvMin1 = new Vector2(uvMax.x, uvMin.y);
                                     //clipped1 = new Vector2(uvMin.x, clipped.y);
                                     clipped1 = new Vector2(offsetX, clipped.y);
                                 }
+                            }
                                 break;
                             case ImageType.TopHalf:
                             case ImageType.BottomHalf:
+                            {
                                 if (j % 2 == 1)
                                 {
                                     float offsetY = 0;
@@ -751,12 +728,14 @@ public class MirrorImage : Image
                                     {
                                         offsetY = uvMax.y - (uvMax.y - uvMin.y) * (yMax - y1) / (y2e - y1);
                                     }
+
                                     //uvMin1 = new Vector2(uvMin.x, clipped.y);
                                     uvMin1 = new Vector2(uvMin.x, uvMax.y);
                                     //clipped1 = new Vector2(clipped.x, uvMin.y);
                                     clipped1 = new Vector2(clipped.x, offsetY);
 
                                 }
+                            }
                                 break;
                             case ImageType.TopLeft:
                             case ImageType.TopRight:
@@ -807,7 +786,6 @@ public class MirrorImage : Image
                             default:
                                 break;
                         }
-
                         
                         AddQuad(toFill, new Vector2(x1, y1) + rect.position, new Vector2(x2, y2) + rect.position, color, uvMin1, clipped1);
                     }
@@ -900,6 +878,637 @@ public class MirrorImage : Image
             {
                 AddQuad(toFill, new Vector2(xMin, yMin) + rect.position, new Vector2(xMax, yMax) + rect.position, color, Vector2.Scale(uvMin, uvScale), Vector2.Scale(uvMax, uvScale));
             }
+        }
+    }
+    
+    static readonly Vector3[] s_Xy = new Vector3[4];
+    static readonly Vector3[] s_Uv = new Vector3[4];
+
+    /// <summary>
+    /// Generate vertices for a filled Image.
+    /// </summary>
+    void GenerateFilledSprite(VertexHelper toFill, bool preserveAspect)
+    {
+        toFill.Clear();
+
+        if (fillAmount < 0.001f)
+            return;
+
+        Vector4 v = GetDrawingDimensions(preserveAspect);
+        var v1 = v;
+        Vector4 outer = sprite != null ? DataUtility.GetOuterUV(sprite) : Vector4.zero;
+        UIVertex uiv = UIVertex.simpleVert;
+        uiv.color = color;
+
+        float tx0 = outer.x;
+        float ty0 = outer.y;
+        float tx1 = outer.z;
+        float ty1 = outer.w;
+
+        // Horizontal and vertical filled sprites are simple -- just end the Image prematurely
+        if (fillMethod == FillMethod.Horizontal || fillMethod == FillMethod.Vertical)
+        {
+            if (fillMethod == FillMethod.Horizontal)
+            {
+                float fill = (tx1 - tx0) * fillAmount;
+
+                // right
+                if (fillOrigin == 1)
+                {
+                    v.x = v.z - (v.z - v.x) * fillAmount;
+                    tx0 = tx1 - fill;
+                }
+                // left
+                else
+                {
+                    v.z = v.x + (v.z - v.x) * fillAmount;
+                    tx1 = tx0 + fill;
+                }
+            }
+            else if (fillMethod == FillMethod.Vertical)
+            {
+                float fill = (ty1 - ty0) * fillAmount;
+
+                // top
+                if (fillOrigin == 1)
+                {
+                    v.y = v.w - (v.w - v.y) * fillAmount;
+                    ty0 = ty1 - fill;
+                }
+                // bottom
+                else
+                {
+                    v.w = v.y + (v.w - v.y) * fillAmount;
+                    ty1 = ty0 + fill;
+                }
+            }
+        }
+
+        s_Xy[0] = new Vector2(v.x, v.y);
+        s_Xy[1] = new Vector2(v.x, v.w);
+        s_Xy[2] = new Vector2(v.z, v.w);
+        s_Xy[3] = new Vector2(v.z, v.y);
+
+        s_Uv[0] = new Vector2(tx0, ty0);
+        s_Uv[1] = new Vector2(tx0, ty1);
+        s_Uv[2] = new Vector2(tx1, ty1);
+        s_Uv[3] = new Vector2(tx1, ty0);
+
+        switch (fillMethod)
+        {
+            case FillMethod.Horizontal:
+            {
+                switch (imageResourceType)
+                {
+                    case ImageType.TopHalf:
+                        s_Xy[0].y = (v.y + v.w) / 2;
+                        s_Xy[3].y = s_Xy[0].y;
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        s_Xy[1].y = s_Xy[0].y;
+                        s_Xy[2].y = s_Xy[0].y;
+                        s_Xy[0].y = v.y;
+                        s_Xy[3].y = v.y;
+                        s_Uv[0] = new Vector2(tx0, ty1);
+                        s_Uv[1] = new Vector2(tx0, ty0);
+                        s_Uv[2] = new Vector2(tx1, ty0);
+                        s_Uv[3] = new Vector2(tx1, ty1);
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomHalf:
+                        s_Xy[1].y = (v.y + v.w) / 2;
+                        s_Xy[2].y = s_Xy[1].y;
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        s_Xy[0].y = s_Xy[1].y;
+                        s_Xy[3].y = s_Xy[1].y;
+                        s_Xy[1].y = v.w;
+                        s_Xy[2].y = v.w;
+                        s_Uv[0] = new Vector2(tx0, ty1);
+                        s_Uv[1] = new Vector2(tx0, ty0);
+                        s_Uv[2] = new Vector2(tx1, ty0);
+                        s_Uv[3] = new Vector2(tx1, ty1);
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.RightHalf:
+                        // 由于镜像方向和fill方向相同，所以为了兼容两种对齐方式，固定使用两个quad
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            // TODO
+                            // uv需要重新计算
+                            var centerX = (v1.x + v1.z) / 2;
+                            s_Xy[0].x = Mathf.Max(centerX, v.z);
+                            s_Xy[1].x = s_Xy[0].x;
+                        
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            s_Xy[2].x = Mathf.Max(centerX, v.z);
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Xy[0].x = v.x;
+                            s_Xy[1].x = v.x;
+                            s_Uv[0] = new Vector2(tx1, ty0);
+                            s_Uv[1] = new Vector2(tx1, ty1);
+                            s_Uv[2] = new Vector2(tx0, ty1);
+                            s_Uv[3] = new Vector2(tx0, ty0);
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                        }
+                        // left
+                        else
+                        {
+                            // uv需要重新计算
+                            // right
+                            var centerX = (v1.x + v1.z) / 2;
+                            s_Xy[0].x = Mathf.Min(centerX, v.z);
+                            s_Xy[1].x = s_Xy[0].x;
+                            s_Uv[0].x = outer.x;
+                            s_Uv[1].x = outer.x;
+                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[3].x = s_Uv[2].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // left
+                            s_Xy[2].x = Mathf.Min(centerX, v.z);
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Xy[0].x = v.x;
+                            s_Xy[1].x = v.x;
+                            s_Uv[0].x = outer.z;
+                            s_Uv[1].x = outer.z;
+                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[3].x = s_Uv[2].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                        }
+                        break;
+                    case ImageType.LeftHalf:
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // left
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.TopRight:
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // left
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomRight:
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // left
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.TopLeft:
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // left
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomLeft:
+                        // right
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // left
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                }
+            }
+                break;
+            case FillMethod.Vertical:
+            {
+                switch (imageResourceType)
+                {
+                    case ImageType.TopHalf:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomHalf:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.RightHalf:
+                        s_Xy[0].x = (v.x + v.z) / 2;
+                        s_Xy[1].x = s_Xy[0].x;
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        s_Xy[2].x = s_Xy[0].x;
+                        s_Xy[3].x = s_Xy[0].x;
+                        s_Xy[0].x = v.x;
+                        s_Xy[1].x = v.x;
+                        s_Uv[0] = new Vector2(tx1, ty0);
+                        s_Uv[1] = new Vector2(tx1, ty1);
+                        s_Uv[2] = new Vector2(tx0, ty1);
+                        s_Uv[3] = new Vector2(tx0, ty0);
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.LeftHalf:
+                        s_Xy[2].x = (v.x + v.z) / 2;
+                        s_Xy[3].x = s_Xy[2].x;
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        s_Xy[0].x = s_Xy[2].x;
+                        s_Xy[1].x = s_Xy[2].x;
+                        s_Xy[2].x = v.z;
+                        s_Xy[3].x = v.z;
+                        s_Uv[0] = new Vector2(tx1, ty0);
+                        s_Uv[1] = new Vector2(tx1, ty1);
+                        s_Uv[2] = new Vector2(tx0, ty1);
+                        s_Uv[3] = new Vector2(tx0, ty0);
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.TopRight:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomRight:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.TopLeft:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                    case ImageType.BottomLeft:
+                        // top
+                        if (fillOrigin == 1)
+                        {
+                            //
+                        }
+                        // bottom
+                        else
+                        {
+                            //
+                        }
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                        break;
+                }
+            }
+                break;
+            case FillMethod.Radial90:
+            {
+                switch (imageResourceType)
+                {
+                    case ImageType.TopHalf:
+                        break;
+                    case ImageType.BottomHalf:
+                        break;
+                    case ImageType.RightHalf:
+                        break;
+                    case ImageType.LeftHalf:
+                        break;
+                    case ImageType.TopRight:
+                        break;
+                    case ImageType.BottomRight:
+                        break;
+                    case ImageType.TopLeft:
+                        break;
+                    case ImageType.BottomLeft:
+                        break;
+                }
+                if (RadialCut(s_Xy, s_Uv, fillAmount, fillClockwise, fillOrigin))
+                    AddQuad(toFill, s_Xy, color, s_Uv);
+            }
+                break;
+            case FillMethod.Radial180:
+            {
+                switch (imageResourceType)
+                {
+                    case ImageType.TopHalf:
+                        break;
+                    case ImageType.BottomHalf:
+                        break;
+                    case ImageType.RightHalf:
+                        break;
+                    case ImageType.LeftHalf:
+                        break;
+                    case ImageType.TopRight:
+                        break;
+                    case ImageType.BottomRight:
+                        break;
+                    case ImageType.TopLeft:
+                        break;
+                    case ImageType.BottomLeft:
+                        break;
+                }
+                for (int side = 0; side < 2; ++side)
+                {
+                    float fx0, fx1, fy0, fy1;
+                    int even = fillOrigin > 1 ? 1 : 0;
+
+                    if (fillOrigin == 0 || fillOrigin == 2)
+                    {
+                        fy0 = 0f;
+                        fy1 = 1f;
+                        if (side == even)
+                        {
+                            fx0 = 0f;
+                            fx1 = 0.5f;
+                        }
+                        else
+                        {
+                            fx0 = 0.5f;
+                            fx1 = 1f;
+                        }
+                    }
+                    else
+                    {
+                        fx0 = 0f;
+                        fx1 = 1f;
+                        if (side == even)
+                        {
+                            fy0 = 0.5f;
+                            fy1 = 1f;
+                        }
+                        else
+                        {
+                            fy0 = 0f;
+                            fy1 = 0.5f;
+                        }
+                    }
+
+                    s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
+                    s_Xy[1].x = s_Xy[0].x;
+                    s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
+                    s_Xy[3].x = s_Xy[2].x;
+
+                    s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
+                    s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
+                    s_Xy[2].y = s_Xy[1].y;
+                    s_Xy[3].y = s_Xy[0].y;
+
+                    s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
+                    s_Uv[1].x = s_Uv[0].x;
+                    s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
+                    s_Uv[3].x = s_Uv[2].x;
+
+                    s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
+                    s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
+                    s_Uv[2].y = s_Uv[1].y;
+                    s_Uv[3].y = s_Uv[0].y;
+
+                    float val = fillClockwise ? fillAmount * 2f - side : fillAmount * 2f - (1 - side);
+
+                    if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((side + fillOrigin + 3) % 4)))
+                    {
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                    }
+                }
+            }
+                break;
+            case FillMethod.Radial360:
+            {
+                switch (imageResourceType)
+                {
+                    case ImageType.TopHalf:
+                        break;
+                    case ImageType.BottomHalf:
+                        break;
+                    case ImageType.RightHalf:
+                        break;
+                    case ImageType.LeftHalf:
+                        break;
+                    case ImageType.TopRight:
+                        break;
+                    case ImageType.BottomRight:
+                        break;
+                    case ImageType.TopLeft:
+                        break;
+                    case ImageType.BottomLeft:
+                        break;
+                }
+                for (int corner = 0; corner < 4; ++corner)
+                {
+                    float fx0, fx1, fy0, fy1;
+
+                    if (corner < 2)
+                    {
+                        fx0 = 0f;
+                        fx1 = 0.5f;
+                    }
+                    else
+                    {
+                        fx0 = 0.5f;
+                        fx1 = 1f;
+                    }
+
+                    if (corner == 0 || corner == 3)
+                    {
+                        fy0 = 0f;
+                        fy1 = 0.5f;
+                    }
+                    else
+                    {
+                        fy0 = 0.5f;
+                        fy1 = 1f;
+                    }
+
+                    s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
+                    s_Xy[1].x = s_Xy[0].x;
+                    s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
+                    s_Xy[3].x = s_Xy[2].x;
+
+                    s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
+                    s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
+                    s_Xy[2].y = s_Xy[1].y;
+                    s_Xy[3].y = s_Xy[0].y;
+
+                    s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
+                    s_Uv[1].x = s_Uv[0].x;
+                    s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
+                    s_Uv[3].x = s_Uv[2].x;
+
+                    s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
+                    s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
+                    s_Uv[2].y = s_Uv[1].y;
+                    s_Uv[3].y = s_Uv[0].y;
+
+                    float val = fillClockwise ?
+                        fillAmount * 4f - ((corner + fillOrigin) % 4) :
+                        fillAmount * 4f - (3 - ((corner + fillOrigin) % 4));
+
+                    if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((corner + 2) % 4)))
+                        AddQuad(toFill, s_Xy, color, s_Uv);
+                }
+            }
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Adjust the specified quad, making it be radially filled instead.
+    /// </summary>
+    static bool RadialCut(Vector3[] xy, Vector3[] uv, float fill, bool invert, int corner)
+    {
+        // Nothing to fill
+        if (fill < 0.001f) return false;
+
+        // Even corners invert the fill direction
+        if ((corner & 1) == 1) invert = !invert;
+
+        // Nothing to adjust
+        if (!invert && fill > 0.999f) return true;
+
+        // Convert 0-1 value into 0 to 90 degrees angle in radians
+        float angle = Mathf.Clamp01(fill);
+        if (invert) angle = 1f - angle;
+        angle *= 90f * Mathf.Deg2Rad;
+
+        // Calculate the effective X and Y factors
+        float cos = Mathf.Cos(angle);
+        float sin = Mathf.Sin(angle);
+
+        RadialCut(xy, cos, sin, invert, corner);
+        RadialCut(uv, cos, sin, invert, corner);
+        return true;
+    }
+
+    /// <summary>
+    /// Adjust the specified quad, making it be radially filled instead.
+    /// </summary>
+    static void RadialCut(Vector3[] xy, float cos, float sin, bool invert, int corner)
+    {
+        int i0 = corner;
+        int i1 = ((corner + 1) % 4);
+        int i2 = ((corner + 2) % 4);
+        int i3 = ((corner + 3) % 4);
+
+        if ((corner & 1) == 1)
+        {
+            if (sin > cos)
+            {
+                cos /= sin;
+                sin = 1f;
+
+                if (invert)
+                {
+                    xy[i1].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
+                    xy[i2].x = xy[i1].x;
+                }
+            }
+            else if (cos > sin)
+            {
+                sin /= cos;
+                cos = 1f;
+
+                if (!invert)
+                {
+                    xy[i2].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
+                    xy[i3].y = xy[i2].y;
+                }
+            }
+            else
+            {
+                cos = 1f;
+                sin = 1f;
+            }
+
+            if (!invert) xy[i3].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
+            else xy[i1].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
+        }
+        else
+        {
+            if (cos > sin)
+            {
+                sin /= cos;
+                cos = 1f;
+
+                if (!invert)
+                {
+                    xy[i1].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
+                    xy[i2].y = xy[i1].y;
+                }
+            }
+            else if (sin > cos)
+            {
+                cos /= sin;
+                sin = 1f;
+
+                if (invert)
+                {
+                    xy[i2].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
+                    xy[i3].x = xy[i2].x;
+                }
+            }
+            else
+            {
+                cos = 1f;
+                sin = 1f;
+            }
+
+            if (invert) xy[i3].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
+            else xy[i1].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
         }
     }
 }
