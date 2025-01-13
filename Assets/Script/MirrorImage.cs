@@ -954,6 +954,7 @@ public class MirrorImage : Image
         s_Uv[2] = new Vector2(tx1, ty1);
         s_Uv[3] = new Vector2(tx1, ty0);
 
+        // 全显示时 fillAmount=1，全不显示时 fillAmount=0
         switch (fillMethod)
         {
             case FillMethod.Horizontal:
@@ -989,25 +990,29 @@ public class MirrorImage : Image
                         AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.RightHalf:
-                        // 由于镜像方向和fill方向相同，所以为了兼容两种对齐方式，固定使用两个quad
+                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // right
                         if (fillOrigin == 1)
                         {
-                            // TODO
                             // uv需要重新计算
+                            // right
                             var centerX = (v1.x + v1.z) / 2;
-                            s_Xy[0].x = Mathf.Max(centerX, v.z);
+                            s_Xy[0].x = Mathf.Max(centerX, v.x);
                             s_Xy[1].x = s_Xy[0].x;
-                        
+                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(0.5f - fillAmount, 0);
+                            s_Uv[1].x = s_Uv[0].x;
+                            s_Uv[2].x = outer.z;
+                            s_Uv[3].x = outer.z;
                             AddQuad(toFill, s_Xy, color, s_Uv);
-                            s_Xy[2].x = Mathf.Max(centerX, v.z);
+                            // left
+                            s_Xy[2].x = Mathf.Max(centerX, v.x);
                             s_Xy[3].x = s_Xy[2].x;
                             s_Xy[0].x = v.x;
                             s_Xy[1].x = v.x;
-                            s_Uv[0] = new Vector2(tx1, ty0);
-                            s_Uv[1] = new Vector2(tx1, ty1);
-                            s_Uv[2] = new Vector2(tx0, ty1);
-                            s_Uv[3] = new Vector2(tx0, ty0);
+                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[1].x = s_Uv[0].x;
+                            s_Uv[2].x = outer.x;
+                            s_Uv[3].x = s_Uv[2].x;
                             AddQuad(toFill, s_Xy, color, s_Uv);
                         }
                         // left
@@ -1036,17 +1041,51 @@ public class MirrorImage : Image
                         }
                         break;
                     case ImageType.LeftHalf:
+                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // right
                         if (fillOrigin == 1)
                         {
-                            //
+                            // uv需要重新计算
+                            // left
+                            var centerX = (v1.x + v1.z) / 2;
+                            s_Xy[2].x = Mathf.Max(centerX, v.x);
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[1].x = s_Uv[0].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // right
+                            s_Xy[2].x = v.z;
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Xy[0].x = Mathf.Max(centerX, v.x);
+                            s_Xy[1].x = s_Xy[0].x;
+                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[1].x = s_Uv[0].x;
+                            s_Uv[2].x = outer.x;
+                            s_Uv[3].x = s_Uv[2].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
                         // left
                         else
                         {
-                            //
+                            // uv需要重新计算
+                            // left
+                            var centerX = (v1.x + v1.z) / 2;
+                            s_Xy[2].x = Mathf.Min(centerX, v.z);
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[3].x = s_Uv[2].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // right
+                            s_Xy[2].x = v.z;
+                            s_Xy[3].x = s_Xy[2].x;
+                            s_Xy[0].x = Mathf.Min(centerX, v.z);
+                            s_Xy[1].x = s_Xy[0].x;
+                            s_Uv[0].x = outer.z;
+                            s_Uv[1].x = outer.z;
+                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[3].x = s_Uv[2].x;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
-                        AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.TopRight:
                         // right
@@ -1108,30 +1147,94 @@ public class MirrorImage : Image
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
+                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // top
                         if (fillOrigin == 1)
                         {
-                            //
+                            // top
+                            var centerY = (v1.y + v1.w) / 2;
+                            s_Xy[0].y = Mathf.Max(centerY, v.y);
+                            s_Xy[3].y = s_Xy[0].y;
+                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(0.5f, fillAmount);
+                            s_Uv[3].y = s_Uv[0].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // bottom
+                            s_Xy[1].y = Mathf.Max(centerY, v.y);
+                            s_Xy[2].y = s_Xy[1].y;
+                            s_Xy[0].y = v.y;
+                            s_Xy[3].y = v.y;
+                            s_Uv[1].y = outer.y;
+                            s_Uv[2].y = outer.y;
+                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[3].y = s_Uv[0].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
                         // bottom
                         else
                         {
-                            //
+                            // top
+                            var centerY = (v1.y + v1.w) / 2;
+                            s_Xy[0].y = Mathf.Min(centerY, v.w);
+                            s_Xy[3].y = s_Xy[0].y;
+                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[2].y = s_Uv[1].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // bottom
+                            s_Xy[1].y = Mathf.Min(centerY, v.w);
+                            s_Xy[2].y = s_Xy[1].y;
+                            s_Xy[0].y = v.y;
+                            s_Xy[3].y = v.y;
+                            s_Uv[0].y = outer.w;
+                            s_Uv[3].y = outer.w;
+                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[2].y = s_Uv[1].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
-                        AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.BottomHalf:
+                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // top
                         if (fillOrigin == 1)
                         {
-                            //
+                            // bottom
+                            var centerY = (v1.y + v1.w) / 2;
+                            s_Xy[1].y = Mathf.Max(centerY, v.y);
+                            s_Xy[2].y = s_Xy[1].y;
+                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[3].y = s_Uv[0].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // top
+                            s_Xy[0].y = Mathf.Max(centerY, v.y);
+                            s_Xy[3].y = s_Xy[0].y;
+                            s_Xy[1].y = v.w;
+                            s_Xy[2].y = v.w;
+                            s_Uv[1].y = outer.y;
+                            s_Uv[2].y = outer.y;
+                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[3].y = s_Uv[0].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
                         // bottom
                         else
                         {
-                            //
+                            // bottom
+                            var centerY = (v1.y + v1.w) / 2;
+                            s_Xy[1].y = Mathf.Min(centerY, v.w);
+                            s_Xy[2].y = s_Xy[1].y;
+                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
+                            s_Uv[2].y = s_Uv[1].y;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
+                            // top
+                            s_Xy[0].y = Mathf.Min(centerY, v.w);
+                            s_Xy[3].y = s_Xy[0].y;
+                            s_Xy[1].y = v.w;
+                            s_Xy[2].y = v.w;
+                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
+                            s_Uv[2].y = s_Uv[1].y;
+                            s_Uv[0].y = outer.w;
+                            s_Uv[3].y = outer.w;
+                            AddQuad(toFill, s_Xy, color, s_Uv);
                         }
-                        AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.RightHalf:
                         s_Xy[0].x = (v.x + v.z) / 2;
