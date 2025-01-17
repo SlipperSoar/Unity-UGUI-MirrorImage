@@ -990,526 +990,76 @@ public class MirrorImage : Image
                         AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.RightHalf:
-                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // right
-                        if (fillOrigin == 1)
-                        {
-                            // uv需要重新计算
-                            // right
-                            var centerX = (v1.x + v1.z) / 2;
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(0.5f - fillAmount, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.z;
-                            s_Uv[3].x = outer.z;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // left
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = v.x;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 1), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
                         // left
-                        else
-                        {
-                            // uv需要重新计算
-                            // right
-                            var centerX = (v1.x + v1.z) / 2;
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[1].x = outer.x;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // left
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = v.x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = outer.z;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 1), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                     case ImageType.LeftHalf:
-                        // 由于镜像方向和fill方向相同，固定使用两个quad
-                        // right
-                        if (fillOrigin == 1)
-                        {
-                            // uv需要重新计算
-                            // left
-                            var centerX = (v1.x + v1.z) / 2;
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // right
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
                         // left
-                        else
-                        {
-                            // uv需要重新计算
-                            // left
-                            var centerX = (v1.x + v1.z) / 2;
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // right
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = outer.z;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 1), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 1), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                     case ImageType.TopRight:
-                        // right
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top right
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[1].x = s_Uv[0].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = outer.x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // left
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top right
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), false, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), true, true, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                     case ImageType.BottomRight:
-                        // right
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom right
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[1].x = s_Uv[0].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].y = v.y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // left
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom right
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), false, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), true, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                     case ImageType.TopLeft:
-                        // right
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top left
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // left
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top left
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), true, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), false, true, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                     case ImageType.BottomLeft:
-                        // right
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom left
-                            s_Xy[2].x = Mathf.Max(centerX, v.x);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[0].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = Mathf.Max(centerX, v.x);
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // left
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom left
-                            s_Xy[2].x = Mathf.Min(centerX, v.z);
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].y = centerY;
-                            s_Uv[2].x = outer.x + (outer.z - outer.x) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].y = centerY;
-                            s_Xy[3].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = Mathf.Min(centerX, v.z);
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = centerY;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = centerY;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[0].y = outer.y;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w;
-                            s_Uv[2].x = outer.z - (outer.z - outer.x) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].y = outer.w;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = outer.y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].y = centerY;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Xy[3].y = centerY;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), true, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), true, false, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), false, true, fillAmount,
+                            true, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), false, false, fillAmount,
+                            true, fillOrigin, toFill, color);
                         break;
                 }
             }
@@ -1519,94 +1069,20 @@ public class MirrorImage : Image
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
-                        // 由于镜像方向和fill方向相同，固定使用两个quad
                         // top
-                        if (fillOrigin == 1)
-                        {
-                            // top
-                            var centerY = (v1.y + v1.w) / 2;
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(0.5f, fillAmount);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 1, 1), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
                         // bottom
-                        else
-                        {
-                            // top
-                            var centerY = (v1.y + v1.w) / 2;
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[0].y = v.y;
-                            s_Xy[3].y = v.y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 1, 0.5f), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                     case ImageType.BottomHalf:
-                        // 由于镜像方向和fill方向相同，固定使用两个quad
-                        // top
-                        if (fillOrigin == 1)
-                        {
-                            // bottom
-                            var centerY = (v1.y + v1.w) / 2;
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].y = outer.y;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
                         // bottom
-                        else
-                        {
-                            // bottom
-                            var centerY = (v1.y + v1.w) / 2;
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].y = v.w;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[3].y = outer.w;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 1, 0.5f), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // top
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 1, 1), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                     case ImageType.RightHalf:
                         s_Xy[0].x = (v.x + v.z) / 2;
@@ -1637,428 +1113,60 @@ public class MirrorImage : Image
                         AddQuad(toFill, s_Xy, color, s_Uv);
                         break;
                     case ImageType.TopRight:
-                        // top
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Xy[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // bottom
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Xy[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = v.x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), true, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), true, true, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                     case ImageType.BottomRight:
-                        // top
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Xy[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // bottom
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Xy[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = v.z;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), true, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), true, false, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                     case ImageType.TopLeft:
-                        // top
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top left
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].x = centerX;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // bottom
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // top left
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount - 0.5f, 0);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = v.y;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].x = centerX;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), true, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), true, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                     case ImageType.BottomLeft:
-                        // top
-                        if (fillOrigin == 1)
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom left
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[1].y = Mathf.Max(centerY, v.y);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[0].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = Mathf.Max(centerY, v.y);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = centerX;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.y;
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
-                        // bottom
-                        else
-                        {
-                            var centerX = (v1.x + v1.z) / 2;
-                            var centerY = (v1.y + v1.w) / 2;
-                            // bottom left
-                            s_Xy[2].x = centerX;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Xy[1].y = Mathf.Min(centerY, v.w);
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Uv[1].y = outer.y + (outer.w - outer.y) * 2 * Mathf.Min(fillAmount, 0.5f);
-                            s_Uv[2].y = s_Uv[1].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // bottom right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top left
-                            s_Xy[0].x = v.x;
-                            s_Xy[0].y = Mathf.Min(centerY, v.w);
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[1].y = v.w;
-                            s_Xy[2].x = centerX;
-                            s_Xy[2].y = s_Xy[1].y;
-                            s_Xy[3].y = s_Xy[0].y;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.x;
-                            s_Uv[0].y = outer.w;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[1].y = outer.w - (outer.w - outer.y) * 2 * Mathf.Max(fillAmount - 0.5f, 0);
-                            s_Uv[2].x = outer.z;
-                            s_Uv[2].y = s_Uv[1].y;
-                            s_Uv[3].x = s_Uv[2].x;
-                            s_Uv[3].y = s_Uv[0].y;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                            // top right
-                            s_Xy[0].x = centerX;
-                            s_Xy[1].x = s_Xy[0].x;
-                            s_Xy[2].x = v.z;
-                            s_Xy[3].x = s_Xy[2].x;
-                            s_Uv[0].x = outer.z;
-                            s_Uv[1].x = s_Uv[0].x;
-                            s_Uv[2].x = outer.x;
-                            s_Uv[3].x = s_Uv[2].x;
-                            AddQuad(toFill, s_Xy, color, s_Uv);
-                        }
+                        // top right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0.5f, 1, 1), true, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom right
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0.5f, 0, 1, 0.5f), true, false, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // top left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0.5f, 0.5f, 1), false, true, fillAmount,
+                            false, fillOrigin, toFill, color);
+                        // bottom left
+                        AddRectQuad(outer, s_Xy, s_Uv, v1, new Vector4(0, 0, 0.5f, 0.5f), false, false, fillAmount,
+                            false, fillOrigin, toFill, color);
                         break;
                 }
             }
@@ -2665,6 +1773,90 @@ public class MirrorImage : Image
             }
                 break;
         }
+    }
+
+    /// <summary>
+    /// 添加局部矩形
+    /// </summary>
+    /// <param name="outer">uv</param>
+    /// <param name="xy">矩形顶点</param>
+    /// <param name="uv">矩形uv</param>
+    /// <param name="v1">未经裁剪的左下右上顶点位置</param>
+    /// <param name="respectPos">期望的顶点位置（左下右上）</param>
+    /// <param name="horizontalRevert">是否水平翻转</param>
+    /// <param name="verticalRevert">是否竖直翻转</param>
+    /// <param name="fillAmount">显示区域百分比</param>
+    /// <param name="isHorizontalDirection">是否是水平方向裁切</param>
+    /// <param name="fillOrigin">对齐方向</param>
+    /// <param name="vertexHelper">vh</param>
+    /// <param name="color">顶点颜色</param>
+    static void AddRectQuad(Vector4 outer, Vector3[] xy, Vector3[] uv, Vector4 v1, Vector4 respectPos, bool horizontalRevert, bool verticalRevert, float fillAmount, bool isHorizontalDirection, int fillOrigin, VertexHelper vertexHelper, Color32 color)
+    {
+        var outer1 = outer;
+        // fillOrigin：水平下1是右 0是左，竖直下1是顶，0是底
+        // 顶点相对位置计算
+        if (isHorizontalDirection)
+        {
+            if (fillOrigin == 1)
+            {
+                fillAmount = 1 - fillAmount;
+                outer.x = outer1.x + (outer1.z - outer1.x) * ((Mathf.Clamp(fillAmount, respectPos.x, respectPos.z) - respectPos.x) / (respectPos.z - respectPos.x));
+                respectPos.x = Mathf.Max(fillAmount, respectPos.x);
+                respectPos.z = Mathf.Max(fillAmount, respectPos.z);
+            }
+            else
+            {
+                outer.z = outer1.z - (outer1.z - outer1.x) * ((respectPos.z - Mathf.Clamp(fillAmount, respectPos.x, respectPos.z))/ (respectPos.z - respectPos.x));
+                respectPos.x = Mathf.Min(fillAmount, respectPos.x);
+                respectPos.z = Mathf.Min(fillAmount, respectPos.z);
+            }
+        }
+        else
+        {
+            if (fillOrigin == 1)
+            {
+                fillAmount = 1 - fillAmount;
+                outer.y = outer1.y + (outer1.w - outer1.y) * ((Mathf.Clamp(fillAmount, respectPos.y, respectPos.w) - respectPos.y) / (respectPos.w - respectPos.y));
+                respectPos.y = Mathf.Max(fillAmount, respectPos.y);
+                respectPos.w = Mathf.Max(fillAmount, respectPos.w);
+            }
+            else
+            {
+                outer.w = outer1.w - (outer1.w - outer1.y) * ((respectPos.w - Mathf.Clamp(fillAmount, respectPos.y, respectPos.w)) / (respectPos.w - respectPos.y));
+                respectPos.y = Mathf.Min(fillAmount, respectPos.y);
+                respectPos.w = Mathf.Min(fillAmount, respectPos.w);
+            }
+        }
+
+        xy[1].x = xy[0].x = Mathf.Lerp(v1.x, v1.z, respectPos.x);
+        xy[3].y = xy[0].y = Mathf.Lerp(v1.y, v1.w, respectPos.y);
+        xy[3].x = xy[2].x = Mathf.Lerp(v1.x, v1.z, respectPos.z);
+        xy[2].y = xy[1].y = Mathf.Lerp(v1.y, v1.w, respectPos.w);
+        
+        // uv计算
+        if (horizontalRevert)
+        {
+            uv[1].x = uv[0].x = outer1.z - (outer.x - outer1.x);
+            uv[3].x = uv[2].x = outer1.x + (outer1.z - outer.z);
+        }
+        else
+        {
+            uv[1].x = uv[0].x = outer.x;
+            uv[3].x = uv[2].x = outer.z;
+        }
+
+        if (verticalRevert)
+        {
+            uv[3].y = uv[0].y = outer1.w - (outer.y - outer1.y);
+            uv[2].y = uv[1].y = outer1.y + (outer1.w - outer.w);
+        }
+        else
+        {
+            uv[3].y = uv[0].y = outer.y;
+            uv[2].y = uv[1].y = outer.w;
+        }
+        
+        AddQuad(vertexHelper, xy, color, uv);
     }
 
     /// <summary>
