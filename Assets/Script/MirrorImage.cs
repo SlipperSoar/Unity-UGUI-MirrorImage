@@ -2065,23 +2065,160 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial90:
             {
+                // fillOrigin: 0 bottom left | 1 top left | 2 top right | 3 bottom right
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.RightHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.LeftHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom left
+                            case 0:
+                                break;
+                            // top left
+                            case 1:
+                                break;
+                            // top right
+                            case 2:
+                                break;
+                            // bottom right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                 }
                 if (RadialCut(s_Xy, s_Uv, fillAmount, fillClockwise, fillOrigin))
@@ -2090,23 +2227,160 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial180:
             {
+                // fillOrigin: 0 bottom | 1 left | 2 top | 3 right
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.RightHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.LeftHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // left
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // right
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                 }
                 for (int side = 0; side < 2; ++side)
@@ -2176,23 +2450,160 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial360:
             {
+                // fillOrigin: 0 bottom | 1 right | 2 top | 3 left
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.RightHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.LeftHalf:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomRight:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.TopLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                     case ImageType.BottomLeft:
+                    {
+                        switch (fillOrigin)
+                        {
+                            // bottom
+                            case 0:
+                                break;
+                            // right
+                            case 1:
+                                break;
+                            // top
+                            case 2:
+                                break;
+                            // left
+                            case 3:
+                                break;
+                        }
+                    }
                         break;
                 }
                 for (int corner = 0; corner < 4; ++corner)
