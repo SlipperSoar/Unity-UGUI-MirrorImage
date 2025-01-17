@@ -2065,7 +2065,8 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial90:
             {
-                // fillOrigin: 0 bottom left | 1 top left | 2 top right | 3 bottom right
+                // fillOrigin: 0 bottom left（右->上） | 1 top left（下->右） | 2 top right（左->下） | 3 bottom right（上->左）
+                // 这里的fillOrigin指圆心位置
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
@@ -2228,6 +2229,7 @@ public class MirrorImage : Image
             case FillMethod.Radial180:
             {
                 // fillOrigin: 0 bottom | 1 left | 2 top | 3 right
+                // 这里的fillOrigin指圆心位置
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
@@ -2451,6 +2453,7 @@ public class MirrorImage : Image
             case FillMethod.Radial360:
             {
                 // fillOrigin: 0 bottom | 1 right | 2 top | 3 left
+                // 这里的fillOrigin指起始半径的位置
                 switch (imageResourceType)
                 {
                     case ImageType.TopHalf:
@@ -2667,6 +2670,11 @@ public class MirrorImage : Image
     /// <summary>
     /// Adjust the specified quad, making it be radially filled instead.
     /// </summary>
+    /// <param name="xy">顶点</param>
+    /// <param name="uv">uv</param>
+    /// <param name="fill">显示的内容量 百分比</param>
+    /// <param name="invert">是否顺时针</param>
+    /// <param name="corner">对齐方式</param>
     static bool RadialCut(Vector3[] xy, Vector3[] uv, float fill, bool invert, int corner)
     {
         // Nothing to fill
