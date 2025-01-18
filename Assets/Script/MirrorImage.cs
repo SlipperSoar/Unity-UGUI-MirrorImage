@@ -1782,7 +1782,7 @@ public class MirrorImage : Image
     /// <param name="xy">矩形顶点</param>
     /// <param name="uv">矩形uv</param>
     /// <param name="v1">未经裁剪的左下右上顶点位置</param>
-    /// <param name="respectPos">期望的顶点位置（左下右上）</param>
+    /// <param name="expectPos">期望的顶点位置（左下右上）</param>
     /// <param name="horizontalRevert">是否水平翻转</param>
     /// <param name="verticalRevert">是否竖直翻转</param>
     /// <param name="fillAmount">显示区域百分比</param>
@@ -1790,7 +1790,7 @@ public class MirrorImage : Image
     /// <param name="fillOrigin">对齐方向</param>
     /// <param name="vertexHelper">vh</param>
     /// <param name="color">顶点颜色</param>
-    static void AddRectQuad(Vector4 outer, Vector3[] xy, Vector3[] uv, Vector4 v1, Vector4 respectPos, bool horizontalRevert, bool verticalRevert, float fillAmount, bool isHorizontalDirection, int fillOrigin, VertexHelper vertexHelper, Color32 color)
+    static void AddRectQuad(Vector4 outer, Vector3[] xy, Vector3[] uv, Vector4 v1, Vector4 expectPos, bool horizontalRevert, bool verticalRevert, float fillAmount, bool isHorizontalDirection, int fillOrigin, VertexHelper vertexHelper, Color32 color)
     {
         var outer1 = outer;
         // fillOrigin：水平下1是右 0是左，竖直下1是顶，0是底
@@ -1800,15 +1800,15 @@ public class MirrorImage : Image
             if (fillOrigin == 1)
             {
                 fillAmount = 1 - fillAmount;
-                outer.x = outer1.x + (outer1.z - outer1.x) * ((Mathf.Clamp(fillAmount, respectPos.x, respectPos.z) - respectPos.x) / (respectPos.z - respectPos.x));
-                respectPos.x = Mathf.Max(fillAmount, respectPos.x);
-                respectPos.z = Mathf.Max(fillAmount, respectPos.z);
+                outer.x = outer1.x + (outer1.z - outer1.x) * ((Mathf.Clamp(fillAmount, expectPos.x, expectPos.z) - expectPos.x) / (expectPos.z - expectPos.x));
+                expectPos.x = Mathf.Max(fillAmount, expectPos.x);
+                expectPos.z = Mathf.Max(fillAmount, expectPos.z);
             }
             else
             {
-                outer.z = outer1.z - (outer1.z - outer1.x) * ((respectPos.z - Mathf.Clamp(fillAmount, respectPos.x, respectPos.z))/ (respectPos.z - respectPos.x));
-                respectPos.x = Mathf.Min(fillAmount, respectPos.x);
-                respectPos.z = Mathf.Min(fillAmount, respectPos.z);
+                outer.z = outer1.z - (outer1.z - outer1.x) * ((expectPos.z - Mathf.Clamp(fillAmount, expectPos.x, expectPos.z))/ (expectPos.z - expectPos.x));
+                expectPos.x = Mathf.Min(fillAmount, expectPos.x);
+                expectPos.z = Mathf.Min(fillAmount, expectPos.z);
             }
         }
         else
@@ -1816,22 +1816,22 @@ public class MirrorImage : Image
             if (fillOrigin == 1)
             {
                 fillAmount = 1 - fillAmount;
-                outer.y = outer1.y + (outer1.w - outer1.y) * ((Mathf.Clamp(fillAmount, respectPos.y, respectPos.w) - respectPos.y) / (respectPos.w - respectPos.y));
-                respectPos.y = Mathf.Max(fillAmount, respectPos.y);
-                respectPos.w = Mathf.Max(fillAmount, respectPos.w);
+                outer.y = outer1.y + (outer1.w - outer1.y) * ((Mathf.Clamp(fillAmount, expectPos.y, expectPos.w) - expectPos.y) / (expectPos.w - expectPos.y));
+                expectPos.y = Mathf.Max(fillAmount, expectPos.y);
+                expectPos.w = Mathf.Max(fillAmount, expectPos.w);
             }
             else
             {
-                outer.w = outer1.w - (outer1.w - outer1.y) * ((respectPos.w - Mathf.Clamp(fillAmount, respectPos.y, respectPos.w)) / (respectPos.w - respectPos.y));
-                respectPos.y = Mathf.Min(fillAmount, respectPos.y);
-                respectPos.w = Mathf.Min(fillAmount, respectPos.w);
+                outer.w = outer1.w - (outer1.w - outer1.y) * ((expectPos.w - Mathf.Clamp(fillAmount, expectPos.y, expectPos.w)) / (expectPos.w - expectPos.y));
+                expectPos.y = Mathf.Min(fillAmount, expectPos.y);
+                expectPos.w = Mathf.Min(fillAmount, expectPos.w);
             }
         }
 
-        xy[1].x = xy[0].x = Mathf.Lerp(v1.x, v1.z, respectPos.x);
-        xy[3].y = xy[0].y = Mathf.Lerp(v1.y, v1.w, respectPos.y);
-        xy[3].x = xy[2].x = Mathf.Lerp(v1.x, v1.z, respectPos.z);
-        xy[2].y = xy[1].y = Mathf.Lerp(v1.y, v1.w, respectPos.w);
+        xy[1].x = xy[0].x = Mathf.Lerp(v1.x, v1.z, expectPos.x);
+        xy[3].y = xy[0].y = Mathf.Lerp(v1.y, v1.w, expectPos.y);
+        xy[3].x = xy[2].x = Mathf.Lerp(v1.x, v1.z, expectPos.z);
+        xy[2].y = xy[1].y = Mathf.Lerp(v1.y, v1.w, expectPos.w);
         
         // uv计算
         if (horizontalRevert)
