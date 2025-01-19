@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -74,9 +75,14 @@ public class MirrorImage : Image
                 GenerateTiledSprite(toFill);
                 break;
             case Type.Filled:
-                // TODO
-                GenerateFilledSprite(toFill, preserveAspect);
-                // base.OnPopulateMesh(toFill);
+                if (fillAmount >= 0.999f)
+                {
+                    GenerateSimpleSprite(toFill, preserveAspect);
+                }
+                else
+                {
+                    GenerateFilledSprite(toFill, preserveAspect);
+                }
                 break;
         }
     }
@@ -1173,165 +1179,9 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial90:
             {
-                // fillOrigin: 0 bottom left（右->上） | 1 top left（下->右） | 2 top right（左->下） | 3 bottom right（上->左）
-                // 这里的fillOrigin指圆心位置
-                switch (imageResourceType)
-                {
-                    case ImageType.TopHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.RightHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.LeftHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom left
-                            case 0:
-                                break;
-                            // top left
-                            case 1:
-                                break;
-                            // top right
-                            case 2:
-                                break;
-                            // bottom right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                }
-                if (RadialCut(s_Xy, s_Uv, fillAmount, fillClockwise, fillOrigin))
-                    AddQuad(toFill, s_Xy, color, s_Uv);
+                AddRectRadial90(outer, s_Xy, s_Uv, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
+                // if (RadialCut(s_Xy, s_Uv, fillAmount, fillClockwise, fillOrigin))
+                //     AddQuad(toFill, s_Xy, color, s_Uv);
             }
                 break;
             case FillMethod.Radial180:
@@ -1834,6 +1684,13 @@ public class MirrorImage : Image
         xy[2].y = xy[1].y = Mathf.Lerp(v1.y, v1.w, expectPos.w);
         
         // uv计算
+        SetUV(uv, outer, outer1, horizontalRevert, verticalRevert);
+        
+        AddQuad(vertexHelper, xy, color, uv);
+    }
+
+    static void SetUV(Vector3[] uv, Vector4 outer, Vector4 outer1, bool horizontalRevert, bool verticalRevert)
+    {
         if (horizontalRevert)
         {
             uv[1].x = uv[0].x = outer1.z - (outer.x - outer1.x);
@@ -1855,10 +1712,579 @@ public class MirrorImage : Image
             uv[3].y = uv[0].y = outer.y;
             uv[2].y = uv[1].y = outer.w;
         }
-        
-        AddQuad(vertexHelper, xy, color, uv);
     }
 
+    /// <summary>
+    /// 添加三角形
+    /// </summary>
+    /// <param name="normalizedXY">归一化顶点坐标</param>
+    /// <param name="vertexHelper">顶点信息</param>
+    /// <param name="color">顶点颜色</param>
+    /// <param name="v">原始顶点位置</param>
+    /// <param name="outer">原始uv</param>
+    /// <param name="xRange">归一化x范围</param>
+    /// <param name="yRange">归一化y范围</param>
+    /// <param name="horizontalRevert">是否水平翻转</param>
+    /// <param name="verticalRevert">是否竖直翻转</param>
+    static void AddTriangle(Vector2[] normalizedXY, VertexHelper vertexHelper, Color32 color, Vector4 v, Vector4 outer, Vector2 xRange, Vector2 yRange, bool horizontalRevert, bool verticalRevert)
+    {
+        var vertCount = vertexHelper.currentVertCount;
+        // 当前进行到的三角顶点索引
+        var triangleIndex = 0;
+        var triangleStartIndex = vertCount;
+        // 先把第一个顶点算出来
+        var firstVt = GetUIVertex(color, normalizedXY[triangleIndex++], v, outer, xRange, yRange, horizontalRevert, verticalRevert);
+        vertexHelper.AddVert(firstVt);
+        UIVertex? vt = null;
+        while (triangleIndex < normalizedXY.Length)
+        {
+            if (!vt.HasValue)
+            {
+                vt = GetUIVertex(color, normalizedXY[triangleIndex++], v, outer, xRange, yRange, horizontalRevert,
+                    verticalRevert);
+                vertexHelper.AddVert(vt.Value);
+            }
+
+            vt = GetUIVertex(color, normalizedXY[triangleIndex++], v, outer, xRange, yRange, horizontalRevert,
+                verticalRevert);
+            vertexHelper.AddVert(vt.Value);
+            vertCount = vertexHelper.currentVertCount;
+            vertexHelper.AddTriangle(triangleStartIndex, vertCount - 2, vertCount - 1);
+        }
+    }
+
+    static UIVertex GetUIVertex(Color32 color, Vector2 normalizedXY, Vector4 v, Vector4 outer, Vector2 xRange, Vector2 yRange, bool horizontalRevert, bool verticalRevert)
+    {
+        var uv = new Vector4(outer.x + (outer.z - outer.x) * (normalizedXY.x - xRange.x) / (xRange.y - xRange.x), outer.y + (outer.w - outer.y) * (normalizedXY.y - yRange.x) / (yRange.y - yRange.x));
+        // 计算翻转
+        if (horizontalRevert) uv.x = outer.z - (uv.x - outer.x);
+        if (verticalRevert) uv.y = outer.w - (uv.y - outer.y);
+        Debug.Log($"<color=yellow> xy: {normalizedXY}, uv: {uv}, xRange: {xRange}, yRange: {yRange}, horizontalRevert: {horizontalRevert}, verticalRevert: {verticalRevert} </color>");
+        // uv计算用的x
+        return new UIVertex()
+        {
+            color = color,
+            position = new Vector3(Mathf.Lerp(v.x, v.z, normalizedXY.x), Mathf.Lerp(v.y, v.w, normalizedXY.y)),
+            uv0 = uv
+        };
+    }
+
+    /// <summary>
+    /// 切割矩形
+    /// </summary>
+    /// <param name="normalizedXY">归一化矩形顶点</param>
+    /// <param name="divideCenterX">是否沿X中线切割</param>
+    /// <param name="divideCenterY">是否沿Y中线切割</param>
+    /// <param name="isRevertX">是否会翻转X切割的顶点顺序</param>
+    /// <param name="isRevertY">是否会翻转Y切割的顶点顺序</param>
+    /// <returns>切割后的顶点信息（每一组不一定是4个顶点位置）</returns>
+    static Vector2[][] DivideRect(Vector2[] normalizedXY, bool divideCenterX, bool divideCenterY, out bool[] isRevertX, out bool isRevertY)
+    {
+        var rectCount = 1 * (divideCenterX ? 2 : 1) * (divideCenterY ? 2 : 1);
+        var result = new Vector2[rectCount][];
+        result[0] = normalizedXY;
+        isRevertX = new []{ false, false };
+        isRevertY = false;
+
+        if (rectCount == 1)
+        {
+            return result;
+        }
+
+        var divideCount = 1;
+        if (divideCenterY)
+        {
+            // 通过索引来区分顶点所处的半边
+            var centers = new Tuple<Vector2, float>[2];
+            var centerIndex = 0;
+            var tempRects = new List<List<Vector2>>();
+            for (int i = 0; i < divideCount; i++)
+            {
+                var rect = result[i];
+                // 首先检查是否会有交点
+                if (rect[0].y > 0.5f && rect[3].y > 0.5f)
+                {
+                    // 中线位于矩形下方
+                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[0], 0.5f);
+                    centers[centerIndex] = new Tuple<Vector2, float>(rect[3], 2.5f);
+                }
+                else if (rect[1].y < 0.5f && rect[2].y < 0.5f)
+                {
+                    // 中线位于矩形上方
+                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[1], 0.5f);
+                    centers[centerIndex] = new Tuple<Vector2, float>(rect[2], 2.5f);
+                }
+                else
+                {
+                    // 0-1
+                    if (rect[0].y <= 0.5f && rect[1].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[0].y) / (rect[1].y - rect[0].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[1], percent), 0.5f);
+                    }
+                    else if (rect[1].y <= 0.5f && rect[0].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[1].y) / (rect[0].y - rect[1].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[0], percent), 0.5f);
+                    }
+                    // 1-2
+                    if (rect[1].y <= 0.5f && rect[2].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[1].y) / (rect[2].y - rect[1].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[2], percent), 1.5f);
+                    }
+                    else if (rect[2].y <= 0.5f && rect[1].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[2].y) / (rect[1].y - rect[2].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[1], percent), 1.5f);
+                    }
+                    // 2-3
+                    if (rect[2].y <= 0.5f && rect[3].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[2].y) / (rect[3].y - rect[2].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[3], percent), 2.5f);
+                    }
+                    else if (rect[3].y <= 0.5f && rect[2].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[3].y) / (rect[2].y - rect[3].y);
+                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[2], percent), 2.5f);
+                    }
+                    // 3-0
+                    if (rect[3].y <= 0.5f && rect[0].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[3].y) / (rect[0].y - rect[3].y);
+                        centers[centerIndex] = new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[0], percent), 3.5f);
+                        isRevertY = true;
+                    }
+                    else if (rect[0].y <= 0.5f && rect[3].y >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[0].y) / (rect[3].y - rect[0].y);
+                        centers[centerIndex] = new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[3], percent), 3.5f);
+                    }
+                }
+                
+                // 理论上这里已经得到两个Center了
+                var centerCount = 0;
+                // 从索引0开始的顶点列表
+                var newRect1 = new List<Vector2>();
+                // 非0开始的顶点列表
+                var newRect2 = new List<Vector2>();
+                
+                var isDividing = false;
+                for (int j = 0; j < rect.Length; j++)
+                {
+                    if (centerCount < 2 && centers[centerCount].Item2 < j)
+                    {
+                        var centerPos = centers[centerCount];
+                        if (isDividing)
+                        {
+                            newRect2.Add(centerPos.Item1);
+                            newRect1.Add(centerPos.Item1);
+                            newRect1.Add(rect[j]);
+                            isDividing = false;
+                        }
+                        else
+                        {
+                            newRect1.Add(centerPos.Item1);
+                            newRect2.Add(centerPos.Item1);
+                            newRect2.Add(rect[j]);
+                            isDividing = true;
+                        }
+                        
+                        centerCount++;
+                    }
+                    else
+                    {
+                        if (isDividing)
+                        {
+                            newRect2.Add(rect[j]);
+                        }
+                        else
+                        {
+                            newRect1.Add(rect[j]);
+                        }
+                    }
+                }
+
+                // 说明最后一个交点在0-3之间，没有被遍历到
+                if (centerCount < 2)
+                {
+                    newRect1.Add(centers[centerCount].Item1);
+                    newRect2.Add(centers[centerCount].Item1);
+                }
+                
+                tempRects.Add(newRect1);
+                tempRects.Add(newRect2);
+                centerIndex = 0;
+            }
+            
+            divideCount *= 2;
+
+            for (int i = 0; i < divideCount; i++)
+            {
+                result[i] = tempRects[i].ToArray();
+            }
+        }
+
+        // TODO: 竖直切割有问题
+        if (divideCenterX)
+        {
+            // 通过索引来区分顶点所处的半边
+            var centers = new Tuple<Vector2, float>[2];
+            var centerIndex = 0;
+            var tempRects = new List<List<Vector2>>();
+            for (int i = 0; i < divideCount; i++)
+            {
+                var rect = result[i];
+                // 当顶点数<4时，认为是在上一步的y轴切割时出现了三角形，这里进行补充以便进行后续计算
+                if (rect.Length < 4)
+                {
+                    var lastPos = rect[rect.Length - 1];
+                    rect = new[] { rect[0], rect[1], rect[2], rect[2] };
+                }
+
+                // 首先检查是否会有交点
+                if (rect[0].x > 0.5f && rect[1].x > 0.5f)
+                {
+                    // 中线位于矩形左方
+                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[1], 1.5f);
+                    centers[centerIndex] = new Tuple<Vector2, float>(rect[0], 3.5f);
+                }
+                else if (rect[2].x < 0.5f && rect[3].x < 0.5f)
+                {
+                    // 中线位于矩形右方
+                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[2], 1.5f);
+                    centers[centerIndex] = new Tuple<Vector2, float>(rect[3], 3.5f);
+                }
+                else
+                {
+                    // 0-1
+                    if (rect[0].x <= 0.5f && rect[1].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[0].x) / (rect[1].x - rect[0].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[1], percent), 0.5f);
+                    }
+                    else if (rect[1].x <= 0.5f && rect[0].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[1].x) / (rect[0].x - rect[1].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[0], percent), 0.5f);
+                    }
+
+                    // 1-2
+                    if (rect[1].x <= 0.5f && rect[2].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[1].x) / (rect[2].x - rect[1].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[2], percent), 1.5f);
+                    }
+                    else if (rect[2].x <= 0.5f && rect[1].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[2].x) / (rect[1].x - rect[2].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[1], percent), 1.5f);
+                    }
+
+                    // 2-3
+                    if (rect[2].x <= 0.5f && rect[3].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[2].x) / (rect[3].x - rect[2].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[3], percent), 2.5f);
+                    }
+                    else if (rect[3].x <= 0.5f && rect[2].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[3].x) / (rect[2].x - rect[3].x);
+                        centers[centerIndex++] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[2], percent), 2.5f);
+                    }
+
+                    // 3-0
+                    if (rect[3].x <= 0.5f && rect[0].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[3].x) / (rect[0].x - rect[3].x);
+                        centers[centerIndex] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[0], percent), 3.5f);
+                    }
+                    else if (rect[0].x <= 0.5f && rect[3].x >= 0.5f)
+                    {
+                        var percent = (0.5f - rect[0].x) / (rect[3].x - rect[0].x);
+                        centers[centerIndex] =
+                            new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[3], percent), 3.5f);
+                    }
+                }
+                
+                // 理论上这里已经得到两个Center了
+                var centerCount = 0;
+                var newRect1 = new List<Vector2>();
+                var newRect2 = new List<Vector2>();
+                var isDividing = false;
+                for (int j = 0; j < rect.Length; j++)
+                {
+                    if (centerCount < 2 && centers[centerCount].Item2 < j)
+                    {
+                        var centerPos = centers[centerCount];
+                        if (isDividing)
+                        {
+                            newRect2.Add(centerPos.Item1);
+                            newRect1.Add(rect[j]);
+                            isDividing = false;
+                        }
+                        else
+                        {
+                            newRect1.Add(centerPos.Item1);
+                            newRect2.Add(rect[j]);
+                            isDividing = true;
+                        }
+                        
+                        centerCount++;
+                    }
+                    else
+                    {
+                        if (isDividing)
+                        {
+                            newRect2.Add(rect[j]);
+                        }
+                        else
+                        {
+                            newRect1.Add(rect[j]);
+                        }
+                    }
+                }
+                
+                // 说明最后一个交点在0-3之间，没有被遍历到
+                if (centerCount < 2)
+                {
+                    newRect1.Add(centers[centerCount].Item1);
+                    newRect2.Add(centers[centerCount].Item1);
+                }
+                
+                tempRects.Add(newRect1);
+                tempRects.Add(newRect2);
+                centerIndex = 0;
+            }
+            
+            divideCount *= 2;
+
+            for (int i = 0; i < divideCount; i++)
+            {
+                result[i] = tempRects[i].ToArray();
+            }
+        }
+
+        return result;
+    }
+    
+    /// <summary>
+    /// 添加90度扇形矩形
+    /// </summary>
+    /// <param name="outer">原uv</param>
+    /// <param name="xy">顶点</param>
+    /// <param name="uv">顶点uv</param>
+    /// <param name="v1">未经裁剪的矩形顶点信息</param>
+    /// <param name="fillAmount"></param>
+    /// <param name="fillOrigin">对齐方式（顶点位置）</param>
+    /// <param name="clockwise">是否逆时针</param>
+    /// <param name="imageType"></param>
+    /// <param name="vertexHelper"></param>
+    /// <param name="color"></param>
+    /// <exception cref="ArgumentOutOfRangeException"><see cref="ImageType"/> 超出范围</exception>
+    static void AddRectRadial90(Vector4 outer, Vector3[] xy, Vector3[] uv, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise, ImageType imageType, VertexHelper vertexHelper, Color32 color)
+    {
+        // 先计算外部总顶点
+        var outerPoses = new Vector2[]
+        {
+            Vector2.zero,
+            new Vector2(0, 1),
+            Vector2.one,
+            new Vector2(1, 0)
+        };
+        // fillOrigin: 0 bottom left（右->上） | 1 top left（下->右） | 2 top right（左->下） | 3 bottom right（上->左）
+        // 这里的fillOrigin指圆心位置，括号为逆时针
+        var radAngle = (1 - fillAmount) * Mathf.PI / 2;
+        switch (fillOrigin)
+        {
+            // bottom left
+            case 0:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[3].y = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[3].y = 1;
+                        outerPoses[3].x = outerPoses[2].x = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[1].x = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[1].x = 1;
+                        outerPoses[1].y = outerPoses[2].y = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // top left
+            case 1:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[0].x = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[0].x = 1;
+                        outerPoses[0].y = outerPoses[3].y = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[2].y = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[2].y = 0;
+                        outerPoses[2].x = outerPoses[3].x = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // top right
+            case 2:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[1].y = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[1].y = 0;
+                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[3].x = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[3].x = 0;
+                        outerPoses[3].y = outerPoses[0].y = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // bottom right
+            case 3:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[2].x = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[2].x = 0;
+                        outerPoses[2].y = outerPoses[1].y = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[0].y = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[0].y = 1;
+                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+        }
+        
+        Debug.Log($"<color=yellow> outer rect pos: 0:{outerPoses[0]} 1:{outerPoses[1]} 2:{outerPoses[2]} 3:{outerPoses[3]} </color>");
+        // 顶点计算
+        // uv计算，关键在于判断是否翻转，这里通过imageType+index来判断
+        // 固定以左 -> 右， 下 -> 上， 左下 -> 右下 -> 左上 -> 右上 的顺序（先上下分，再左右分）
+        switch (imageType)
+        {
+            case ImageType.TopHalf:
+            case ImageType.BottomHalf:
+            {
+                var verticalRevert = imageType == ImageType.BottomHalf;
+                var rects = DivideRect(outerPoses, false, true, out var isRevertX, out var isRevertY);
+                var xRange = new Vector2(0, 1);
+                // top
+                AddTriangle(rects[isRevertY ? 0 : 1], vertexHelper, color, v1, outer, xRange, new Vector2(0.5f, 1), false, verticalRevert);
+                // bottom
+                AddTriangle(rects[isRevertY ? 1 : 0], vertexHelper, color, v1, outer, xRange, new Vector2(0, 0.5f), false, !verticalRevert);
+            }
+                break;
+            case ImageType.RightHalf:
+            case ImageType.LeftHalf:
+            {
+                var horizontalRevert = imageType == ImageType.RightHalf;
+                var rects = DivideRect(outerPoses, true, false, out var isRevertX, out var isRevertY);
+                var yRange = new Vector2(0, 1);
+                // left
+                AddTriangle(rects[isRevertX[0] ? 0 : 1], vertexHelper, color, v1, outer, new Vector2(0, 0.5f), yRange, horizontalRevert, false);
+                // right
+                AddTriangle(rects[isRevertX[0] ? 1 : 0], vertexHelper, color, v1, outer, new Vector2(0.5f, 1), yRange, !horizontalRevert, false);
+            }
+                break;
+            case ImageType.TopRight:
+            case ImageType.BottomRight:
+            case ImageType.TopLeft:
+            case ImageType.BottomLeft:
+            {
+                var verticalRevert = imageType == ImageType.BottomRight || imageType == ImageType.BottomLeft;
+                var horizontalRevert = imageType == ImageType.BottomRight || imageType == ImageType.TopRight;
+                var rects = DivideRect(outerPoses, true, true, out var isRevertX, out var isRevertY);
+                var topRange = new Vector2(0.5f, 1);
+                var bottomRange = new Vector2(0, 0.5f);
+                var leftRange = new Vector2(0, 0.5f);
+                var rightRange = new Vector2(0.5f, 1);
+                // 当y翻转时，0 1为上， 2 3为下，当x翻转时，+0为右， +1为左
+                var topStartIndex = isRevertY ? 0 : 2;
+                var bottomStartIndex = isRevertY ? 2 : 0;
+                var isTopXRevert = isRevertY ? isRevertX[0] : isRevertX[1];
+                var isBottomXRevert = isRevertY ? isRevertX[1] : isRevertX[0];
+                // top right
+                AddTriangle(rects[topStartIndex + (isTopXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, topRange, horizontalRevert, verticalRevert);
+                // bottom right
+                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, bottomRange, horizontalRevert, !verticalRevert);
+                // top left
+                AddTriangle(rects[topStartIndex + (isTopXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, topRange, !horizontalRevert, verticalRevert);
+                // bottom left
+                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, bottomRange, !horizontalRevert, !verticalRevert);
+            }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(imageType), imageType, null);
+        }
+    }
+    
     /// <summary>
     /// Adjust the specified quad, making it be radially filled instead.
     /// </summary>
