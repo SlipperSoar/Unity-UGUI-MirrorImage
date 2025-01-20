@@ -51,6 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Script\MirrorImage.cs" />
+     <None Include="Assets\Script\Test.shader" />
  <Reference Include="Unity.VSCode.Editor">
  <HintPath>D:/Porjects/Github/Unity-UGUI-MirrorImage/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
  </Reference>

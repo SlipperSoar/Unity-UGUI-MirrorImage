@@ -1854,6 +1854,7 @@ public class MirrorImage : Image
                     {
                         var percent = (0.5f - rect[3].y) / (rect[0].y - rect[3].y);
                         centers[centerIndex] = new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[0], percent), 3.5f);
+                        // 当3在下0在上时，0属于上边，此时认为y发生了翻转
                         isRevertY = true;
                     }
                     else if (rect[0].y <= 0.5f && rect[3].y >= 0.5f)
@@ -1939,7 +1940,6 @@ public class MirrorImage : Image
                 // 当顶点数<4时，认为是在上一步的y轴切割时出现了三角形，这里进行补充以便进行后续计算
                 if (rect.Length < 4)
                 {
-                    var lastPos = rect[rect.Length - 1];
                     rect = new[] { rect[0], rect[1], rect[2], rect[2] };
                 }
 
@@ -1970,6 +1970,8 @@ public class MirrorImage : Image
                         var percent = (0.5f - rect[1].x) / (rect[0].x - rect[1].x);
                         centers[centerIndex++] =
                             new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[0], percent), 0.5f);
+                        // 当0在右1在左时被x中线切割，0属于右侧，此时认为x发生了翻转
+                        isRevertX[i] = true;
                     }
 
                     // 1-2
@@ -2017,8 +2019,11 @@ public class MirrorImage : Image
                 
                 // 理论上这里已经得到两个Center了
                 var centerCount = 0;
+                // 从索引0开始的顶点列表
                 var newRect1 = new List<Vector2>();
+                // 非0开始的顶点列表
                 var newRect2 = new List<Vector2>();
+
                 var isDividing = false;
                 for (int j = 0; j < rect.Length; j++)
                 {
@@ -2028,12 +2033,14 @@ public class MirrorImage : Image
                         if (isDividing)
                         {
                             newRect2.Add(centerPos.Item1);
+                            newRect1.Add(centerPos.Item1);
                             newRect1.Add(rect[j]);
                             isDividing = false;
                         }
                         else
                         {
                             newRect1.Add(centerPos.Item1);
+                            newRect2.Add(centerPos.Item1);
                             newRect2.Add(rect[j]);
                             isDividing = true;
                         }
@@ -2248,9 +2255,9 @@ public class MirrorImage : Image
                 var rects = DivideRect(outerPoses, true, false, out var isRevertX, out var isRevertY);
                 var yRange = new Vector2(0, 1);
                 // left
-                AddTriangle(rects[isRevertX[0] ? 0 : 1], vertexHelper, color, v1, outer, new Vector2(0, 0.5f), yRange, horizontalRevert, false);
+                AddTriangle(rects[isRevertX[0] ? 1 : 0], vertexHelper, color, v1, outer, new Vector2(0, 0.5f), yRange, horizontalRevert, false);
                 // right
-                AddTriangle(rects[isRevertX[0] ? 1 : 0], vertexHelper, color, v1, outer, new Vector2(0.5f, 1), yRange, !horizontalRevert, false);
+                AddTriangle(rects[isRevertX[0] ? 0 : 1], vertexHelper, color, v1, outer, new Vector2(0.5f, 1), yRange, !horizontalRevert, false);
             }
                 break;
             case ImageType.TopRight:
