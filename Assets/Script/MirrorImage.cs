@@ -123,7 +123,6 @@ public class MirrorImage : Image
         Vector4 v = GetDrawingDimensions(lPreserveAspect);
         var uv = (sprite != null) ? DataUtility.GetOuterUV(sprite) : Vector4.zero;
         Vector4 v1 = v;
-        //Debug.Log("uv::::" + uv + "  v:" + v+ "  center:"+ rectTransform.rect.center+ "  rect:" + rectTransform.rect);
 
         switch (imageResourceType)
         {
@@ -1180,7 +1179,7 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial90:
             {
-                AddRectRadial90(outer, s_Xy, s_Uv, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
+                AddRectRadial90(outer, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
             }
                 break;
             case FillMethod.Radial180:
@@ -2062,7 +2061,7 @@ public class MirrorImage : Image
     /// <param name="vertexHelper"></param>
     /// <param name="color"></param>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="ImageType"/> 超出范围</exception>
-    static void AddRectRadial90(Vector4 outer, Vector3[] xy, Vector3[] uv, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise, ImageType imageType, VertexHelper vertexHelper, Color32 color)
+    static void AddRectRadial90(Vector4 outer, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise, ImageType imageType, VertexHelper vertexHelper, Color32 color)
     {
         // 先计算外部总顶点
         var outerPoses = new Vector2[]
