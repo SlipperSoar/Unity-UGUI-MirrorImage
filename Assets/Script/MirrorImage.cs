@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -1728,6 +1729,11 @@ public class MirrorImage : Image
     /// <param name="verticalRevert">是否竖直翻转</param>
     static void AddTriangle(Vector2[] normalizedXY, VertexHelper vertexHelper, Color32 color, Vector4 v, Vector4 outer, Vector2 xRange, Vector2 yRange, bool horizontalRevert, bool verticalRevert)
     {
+        if (normalizedXY == null || normalizedXY.Length == 0)
+        {
+            return;
+        }
+
         var vertCount = vertexHelper.currentVertCount;
         // 当前进行到的三角顶点索引
         var triangleIndex = 0;
@@ -1759,7 +1765,7 @@ public class MirrorImage : Image
         // 计算翻转
         if (horizontalRevert) uv.x = outer.z - (uv.x - outer.x);
         if (verticalRevert) uv.y = outer.w - (uv.y - outer.y);
-        Debug.Log($"<color=yellow> xy: {normalizedXY}, uv: {uv}, xRange: {xRange}, yRange: {yRange}, horizontalRevert: {horizontalRevert}, verticalRevert: {verticalRevert} </color>");
+        // Debug.Log($"<color=yellow> xy: {normalizedXY}, uv: {uv}, xRange: {xRange}, yRange: {yRange}, horizontalRevert: {horizontalRevert}, verticalRevert: {verticalRevert} </color>");
         // uv计算用的x
         return new UIVertex()
         {
@@ -1801,66 +1807,44 @@ public class MirrorImage : Image
             for (int i = 0; i < divideCount; i++)
             {
                 var rect = result[i];
+                // 空的切割成两个空
+                if (rect.Length == 0)
+                {
+                    tempRects.Add(new List<Vector2>());
+                    tempRects.Add(new List<Vector2>());
+                    continue;
+                }
                 // 首先检查是否会有交点
-                if (rect[0].y > 0.5f && rect[3].y > 0.5f)
+                if (rect.All(p => p.y >= 0.5f))
                 {
                     // 中线位于矩形下方
-                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[0], 0.5f);
-                    centers[centerIndex] = new Tuple<Vector2, float>(rect[3], 2.5f);
+                    tempRects.Add(new List<Vector2>());
+                    tempRects.Add(new List<Vector2>(rect));
+                    continue;
                 }
-                else if (rect[1].y < 0.5f && rect[2].y < 0.5f)
+                else if (rect.All(p => p.y <= 0.5f))
                 {
                     // 中线位于矩形上方
-                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[1], 0.5f);
-                    centers[centerIndex] = new Tuple<Vector2, float>(rect[2], 2.5f);
+                    tempRects.Add(new List<Vector2>(rect));
+                    tempRects.Add(new List<Vector2>());
+                    continue;
                 }
                 else
                 {
-                    // 0-1
-                    if (rect[0].y <= 0.5f && rect[1].y >= 0.5f)
+                    for (int j = 0; j < rect.Length; j++)
                     {
-                        var percent = (0.5f - rect[0].y) / (rect[1].y - rect[0].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[1], percent), 0.5f);
-                    }
-                    else if (rect[1].y <= 0.5f && rect[0].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[1].y) / (rect[0].y - rect[1].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[0], percent), 0.5f);
-                    }
-                    // 1-2
-                    if (rect[1].y <= 0.5f && rect[2].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[1].y) / (rect[2].y - rect[1].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[2], percent), 1.5f);
-                    }
-                    else if (rect[2].y <= 0.5f && rect[1].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[2].y) / (rect[1].y - rect[2].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[1], percent), 1.5f);
-                    }
-                    // 2-3
-                    if (rect[2].y <= 0.5f && rect[3].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[2].y) / (rect[3].y - rect[2].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[3], percent), 2.5f);
-                    }
-                    else if (rect[3].y <= 0.5f && rect[2].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[3].y) / (rect[2].y - rect[3].y);
-                        centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[2], percent), 2.5f);
-                    }
-                    // 3-0
-                    if (rect[3].y <= 0.5f && rect[0].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[3].y) / (rect[0].y - rect[3].y);
-                        centers[centerIndex] = new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[0], percent), 3.5f);
-                        // 当3在下0在上时，0属于上边，此时认为y发生了翻转
-                        isRevertY = true;
-                    }
-                    else if (rect[0].y <= 0.5f && rect[3].y >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[0].y) / (rect[3].y - rect[0].y);
-                        centers[centerIndex] = new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[3], percent), 3.5f);
+                        var nextIndex = (j + 1) % rect.Length;
+                        if (rect[j].y <= 0.5f && rect[nextIndex].y >= 0.5f)
+                        {
+                            var percent = (0.5f - rect[j].y) / (rect[nextIndex].y - rect[j].y);
+                            centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[j], rect[nextIndex], percent), j + 0.5f);
+                            if (j == 3) isRevertY = true;
+                        }
+                        else if (rect[nextIndex].y <= 0.5f && rect[j].y >= 0.5f)
+                        {
+                            var percent = (0.5f - rect[nextIndex].y) / (rect[j].y - rect[nextIndex].y);
+                            centers[centerIndex++] = new Tuple<Vector2, float>(Vector2.Lerp(rect[nextIndex], rect[j], percent), j + 0.5f);
+                        }
                     }
                 }
                 
@@ -1927,7 +1911,6 @@ public class MirrorImage : Image
             }
         }
 
-        // TODO: 竖直切割有问题
         if (divideCenterX)
         {
             // 通过索引来区分顶点所处的半边
@@ -1937,83 +1920,67 @@ public class MirrorImage : Image
             for (int i = 0; i < divideCount; i++)
             {
                 var rect = result[i];
-                // 当顶点数<4时，认为是在上一步的y轴切割时出现了三角形，这里进行补充以便进行后续计算
-                if (rect.Length < 4)
+                // 空的切割成两个空
+                if (rect.Length == 0)
                 {
-                    rect = new[] { rect[0], rect[1], rect[2], rect[2] };
+                    tempRects.Add(new List<Vector2>());
+                    tempRects.Add(new List<Vector2>());
+                    continue;
+                }
+                
+                // 以x值最小的点作为起点重新排序，以免y切割后出现起点不是偏左下的情况
+                var minIndex = 0;
+                var rectList = new List<Vector2>(rect);
+                var minX = float.MaxValue;
+                for (int j = 0; j < rect.Length; j++)
+                {
+                    var v = rect[j];
+                    if (v.x < minX)
+                    {
+                        minX = v.x;
+                        minIndex = j;
+                    }
+                }
+
+                for (int j = 0; j < rect.Length; j++)
+                {
+                    rect[j] = rectList[(minIndex + j) % rect.Length];
                 }
 
                 // 首先检查是否会有交点
-                if (rect[0].x > 0.5f && rect[1].x > 0.5f)
+                if (rect.All(p => p.x >= 0.5f))
                 {
                     // 中线位于矩形左方
-                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[1], 1.5f);
-                    centers[centerIndex] = new Tuple<Vector2, float>(rect[0], 3.5f);
+                    tempRects.Add(new List<Vector2>());
+                    tempRects.Add(new List<Vector2>(rect));
+                    continue;
                 }
-                else if (rect[2].x < 0.5f && rect[3].x < 0.5f)
+                else if (rect.All(p => p.x <= 0.5f))
                 {
                     // 中线位于矩形右方
-                    centers[centerIndex++] = new Tuple<Vector2, float>(rect[2], 1.5f);
-                    centers[centerIndex] = new Tuple<Vector2, float>(rect[3], 3.5f);
+                    tempRects.Add(new List<Vector2>(rect));
+                    tempRects.Add(new List<Vector2>());
+                    continue;
                 }
                 else
                 {
-                    // 0-1
-                    if (rect[0].x <= 0.5f && rect[1].x >= 0.5f)
+                    for (int j = 0; j < rect.Length; j++)
                     {
-                        var percent = (0.5f - rect[0].x) / (rect[1].x - rect[0].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[1], percent), 0.5f);
-                    }
-                    else if (rect[1].x <= 0.5f && rect[0].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[1].x) / (rect[0].x - rect[1].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[0], percent), 0.5f);
-                        // 当0在右1在左时被x中线切割，0属于右侧，此时认为x发生了翻转
-                        isRevertX[i] = true;
-                    }
-
-                    // 1-2
-                    if (rect[1].x <= 0.5f && rect[2].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[1].x) / (rect[2].x - rect[1].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[1], rect[2], percent), 1.5f);
-                    }
-                    else if (rect[2].x <= 0.5f && rect[1].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[2].x) / (rect[1].x - rect[2].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[1], percent), 1.5f);
-                    }
-
-                    // 2-3
-                    if (rect[2].x <= 0.5f && rect[3].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[2].x) / (rect[3].x - rect[2].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[2], rect[3], percent), 2.5f);
-                    }
-                    else if (rect[3].x <= 0.5f && rect[2].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[3].x) / (rect[2].x - rect[3].x);
-                        centers[centerIndex++] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[2], percent), 2.5f);
-                    }
-
-                    // 3-0
-                    if (rect[3].x <= 0.5f && rect[0].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[3].x) / (rect[0].x - rect[3].x);
-                        centers[centerIndex] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[3], rect[0], percent), 3.5f);
-                    }
-                    else if (rect[0].x <= 0.5f && rect[3].x >= 0.5f)
-                    {
-                        var percent = (0.5f - rect[0].x) / (rect[3].x - rect[0].x);
-                        centers[centerIndex] =
-                            new Tuple<Vector2, float>(Vector2.Lerp(rect[0], rect[3], percent), 3.5f);
+                        var nextIndex = (j + 1) % rect.Length;
+                        if (rect[j].x <= 0.5f && rect[nextIndex].x >= 0.5f)
+                        {
+                            var percent = (0.5f - rect[j].x) / (rect[nextIndex].x - rect[j].x);
+                            centers[centerIndex++] =
+                                new Tuple<Vector2, float>(Vector2.Lerp(rect[j], rect[nextIndex], percent), j + 0.5f);
+                        }
+                        else if (rect[nextIndex].x <= 0.5f && rect[j].x >= 0.5f)
+                        {
+                            var percent = (0.5f - rect[nextIndex].x) / (rect[j].x - rect[nextIndex].x);
+                            centers[centerIndex++] =
+                                new Tuple<Vector2, float>(Vector2.Lerp(rect[nextIndex], rect[j], percent), j + 0.5f);
+                            // [X] 当0在右1在左时被x中线切割，0属于右侧，此时认为x发生了翻转
+                            if (j == 0) isRevertX[i] = true;
+                        }
                     }
                 }
                 
@@ -2230,7 +2197,6 @@ public class MirrorImage : Image
                 break;
         }
         
-        Debug.Log($"<color=yellow> outer rect pos: 0:{outerPoses[0]} 1:{outerPoses[1]} 2:{outerPoses[2]} 3:{outerPoses[3]} </color>");
         // 顶点计算
         // uv计算，关键在于判断是否翻转，这里通过imageType+index来判断
         // 固定以左 -> 右， 下 -> 上， 左下 -> 右下 -> 左上 -> 右上 的顺序（先上下分，再左右分）
@@ -2278,13 +2244,13 @@ public class MirrorImage : Image
                 var isTopXRevert = isRevertY ? isRevertX[0] : isRevertX[1];
                 var isBottomXRevert = isRevertY ? isRevertX[1] : isRevertX[0];
                 // top right
-                AddTriangle(rects[topStartIndex + (isTopXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, topRange, horizontalRevert, verticalRevert);
+                AddTriangle(rects[topStartIndex + (isTopXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, topRange, !horizontalRevert, verticalRevert);
                 // bottom right
-                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, bottomRange, horizontalRevert, !verticalRevert);
+                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightRange, bottomRange, !horizontalRevert, !verticalRevert);
                 // top left
-                AddTriangle(rects[topStartIndex + (isTopXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, topRange, !horizontalRevert, verticalRevert);
+                AddTriangle(rects[topStartIndex + (isTopXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, topRange, horizontalRevert, verticalRevert);
                 // bottom left
-                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, bottomRange, !horizontalRevert, !verticalRevert);
+                AddTriangle(rects[bottomStartIndex + (isBottomXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftRange, bottomRange, horizontalRevert, !verticalRevert);
             }
                 break;
             default:
