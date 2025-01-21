@@ -158,7 +158,7 @@ public class MirrorImage : Image
         }
 
         //v.w = (v.w + v.y) / 2;
-        var color32 = color;
+        Color32 color32 = color;
         vh.Clear();
         vh.AddVert(new Vector3(v.x, v.y), color32, new Vector2(uv.x, uv.y));
         vh.AddVert(new Vector3(v.x, v.w), color32, new Vector2(uv.x, uv.w));
@@ -213,7 +213,7 @@ public class MirrorImage : Image
                 vh.AddTriangle(3, 2, 5);
                 vh.AddTriangle(5, 4, 3);
                 // 6 7 8
-                vh.AddVert(new Vector3(v1.x, v1.y), color32, new Vector2(uv.z, uv.w));
+                vh.AddVert(new Vector3(v1.x, v1.y), color32, new Vector2(uv.x, uv.w));
                 vh.AddVert(new Vector3(v.z, v1.y), color32, new Vector2(uv.z, uv.w));
                 vh.AddVert(new Vector3(v1.z, v1.y), color32, new Vector2(uv.x, uv.w));
                 vh.AddTriangle(6, 0, 3);
@@ -1181,8 +1181,6 @@ public class MirrorImage : Image
             case FillMethod.Radial90:
             {
                 AddRectRadial90(outer, s_Xy, s_Uv, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
-                // if (RadialCut(s_Xy, s_Uv, fillAmount, fillClockwise, fillOrigin))
-                //     AddQuad(toFill, s_Xy, color, s_Uv);
             }
                 break;
             case FillMethod.Radial180:
