@@ -1184,163 +1184,7 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial180:
             {
-                // fillOrigin: 0 bottom | 1 left | 2 top | 3 right
-                // 这里的fillOrigin指圆心位置
-                switch (imageResourceType)
-                {
-                    case ImageType.TopHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.RightHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.LeftHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // left
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // right
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                }
+                AddRectRadial180(outer, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
                 for (int side = 0; side < 2; ++side)
                 {
                     float fx0, fx1, fy0, fy1;
@@ -1408,216 +1252,60 @@ public class MirrorImage : Image
                 break;
             case FillMethod.Radial360:
             {
-                // fillOrigin: 0 bottom | 1 right | 2 top | 3 left
-                // 这里的fillOrigin指起始半径的位置
-                switch (imageResourceType)
-                {
-                    case ImageType.TopHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.RightHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.LeftHalf:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomRight:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.TopLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                    case ImageType.BottomLeft:
-                    {
-                        switch (fillOrigin)
-                        {
-                            // bottom
-                            case 0:
-                                break;
-                            // right
-                            case 1:
-                                break;
-                            // top
-                            case 2:
-                                break;
-                            // left
-                            case 3:
-                                break;
-                        }
-                    }
-                        break;
-                }
-                for (int corner = 0; corner < 4; ++corner)
-                {
-                    float fx0, fx1, fy0, fy1;
-
-                    if (corner < 2)
-                    {
-                        fx0 = 0f;
-                        fx1 = 0.5f;
-                    }
-                    else
-                    {
-                        fx0 = 0.5f;
-                        fx1 = 1f;
-                    }
-
-                    if (corner == 0 || corner == 3)
-                    {
-                        fy0 = 0f;
-                        fy1 = 0.5f;
-                    }
-                    else
-                    {
-                        fy0 = 0.5f;
-                        fy1 = 1f;
-                    }
-
-                    s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
-                    s_Xy[1].x = s_Xy[0].x;
-                    s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
-                    s_Xy[3].x = s_Xy[2].x;
-
-                    s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
-                    s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
-                    s_Xy[2].y = s_Xy[1].y;
-                    s_Xy[3].y = s_Xy[0].y;
-
-                    s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
-                    s_Uv[1].x = s_Uv[0].x;
-                    s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
-                    s_Uv[3].x = s_Uv[2].x;
-
-                    s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
-                    s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
-                    s_Uv[2].y = s_Uv[1].y;
-                    s_Uv[3].y = s_Uv[0].y;
-
-                    float val = fillClockwise ?
-                        fillAmount * 4f - ((corner + fillOrigin) % 4) :
-                        fillAmount * 4f - (3 - ((corner + fillOrigin) % 4));
-
-                    if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((corner + 2) % 4)))
-                        AddQuad(toFill, s_Xy, color, s_Uv);
-                }
+                AddRectRadial360(outer, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
+                // for (int corner = 0; corner < 4; ++corner)
+                // {
+                //     float fx0, fx1, fy0, fy1;
+                //
+                //     if (corner < 2)
+                //     {
+                //         fx0 = 0f;
+                //         fx1 = 0.5f;
+                //     }
+                //     else
+                //     {
+                //         fx0 = 0.5f;
+                //         fx1 = 1f;
+                //     }
+                //
+                //     if (corner == 0 || corner == 3)
+                //     {
+                //         fy0 = 0f;
+                //         fy1 = 0.5f;
+                //     }
+                //     else
+                //     {
+                //         fy0 = 0.5f;
+                //         fy1 = 1f;
+                //     }
+                //
+                //     s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
+                //     s_Xy[1].x = s_Xy[0].x;
+                //     s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
+                //     s_Xy[3].x = s_Xy[2].x;
+                //
+                //     s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
+                //     s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
+                //     s_Xy[2].y = s_Xy[1].y;
+                //     s_Xy[3].y = s_Xy[0].y;
+                //
+                //     s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
+                //     s_Uv[1].x = s_Uv[0].x;
+                //     s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
+                //     s_Uv[3].x = s_Uv[2].x;
+                //
+                //     s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
+                //     s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
+                //     s_Uv[2].y = s_Uv[1].y;
+                //     s_Uv[3].y = s_Uv[0].y;
+                //
+                //     float val = fillClockwise ?
+                //         fillAmount * 4f - ((corner + fillOrigin) % 4) :
+                //         fillAmount * 4f - (3 - ((corner + fillOrigin) % 4));
+                //
+                //     if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((corner + 2) % 4)))
+                //         AddQuad(toFill, s_Xy, color, s_Uv);
+                // }
             }
                 break;
         }
@@ -2051,8 +1739,6 @@ public class MirrorImage : Image
     /// 添加90度扇形矩形
     /// </summary>
     /// <param name="outer">原uv</param>
-    /// <param name="xy">顶点</param>
-    /// <param name="uv">顶点uv</param>
     /// <param name="v1">未经裁剪的矩形顶点信息</param>
     /// <param name="fillAmount"></param>
     /// <param name="fillOrigin">对齐方式（顶点位置）</param>
@@ -2252,6 +1938,490 @@ public class MirrorImage : Image
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(imageType), imageType, null);
+        }
+    }
+
+    /// <summary>
+    /// 添加180度扇形矩形
+    /// </summary>
+    /// <param name="outer">原uv</param>
+    /// <param name="v1">未经裁剪的矩形顶点信息</param>
+    /// <param name="fillAmount"></param>
+    /// <param name="fillOrigin">对齐方式（顶点位置）</param>
+    /// <param name="clockwise">是否逆时针</param>
+    /// <param name="imageType"></param>
+    /// <param name="vertexHelper"></param>
+    /// <param name="color"></param>
+    /// <exception cref="ArgumentOutOfRangeException"><see cref="ImageType"/> 超出范围</exception>
+    static void AddRectRadial180(Vector4 outer, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise,
+        ImageType imageType, VertexHelper vertexHelper, Color32 color)
+    {
+        // 先计算外部总顶点
+        var outerPoses = new Vector2[]
+        {
+            Vector2.zero,
+            new Vector2(0, 1),
+            Vector2.one,
+            new Vector2(1, 0)
+        };
+        // fillOrigin: 0 bottom | 1 left | 2 top | 3 right
+        // 这里的fillOrigin指圆心位置
+        var radAngle = (1 - fillAmount) * Mathf.PI;
+        // TODO: 计算外部的所有顶点
+        switch (fillOrigin)
+        {
+            // bottom left
+            case 0:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[3].y = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[3].y = 1;
+                        outerPoses[3].x = outerPoses[2].x = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[1].x = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[1].x = 1;
+                        outerPoses[1].y = outerPoses[2].y = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // top left
+            case 1:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[0].x = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[0].x = 1;
+                        outerPoses[0].y = outerPoses[3].y = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[2].y = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[2].y = 0;
+                        outerPoses[2].x = outerPoses[3].x = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // top right
+            case 2:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[1].y = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[1].y = 0;
+                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[3].x = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[3].x = 0;
+                        outerPoses[3].y = outerPoses[0].y = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+            // bottom right
+            case 3:
+                if (clockwise)
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[2].x = 1 - Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[2].x = 0;
+                        outerPoses[2].y = outerPoses[1].y = 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                else
+                {
+                    // 45度
+                    if (fillAmount > 0.5f)
+                    {
+                        outerPoses[0].y = Mathf.Tan(radAngle);
+                    }
+                    else
+                    {
+                        outerPoses[0].y = 1;
+                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
+                    }
+                }
+                break;
+        }
+
+        switch (imageType)
+        {
+            case ImageType.TopHalf:
+                break;
+            case ImageType.BottomHalf:
+                break;
+            case ImageType.RightHalf:
+                break;
+            case ImageType.LeftHalf:
+                break;
+            case ImageType.TopRight:
+                break;
+            case ImageType.BottomRight:
+                break;
+            case ImageType.TopLeft:
+                break;
+            case ImageType.BottomLeft:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(imageType), imageType, null);
+        }
+    }
+    
+    /// <summary>
+    /// 添加360度扇形矩形
+    /// </summary>
+    /// <param name="outer">原uv</param>
+    /// <param name="v1">未经裁剪的矩形顶点信息</param>
+    /// <param name="fillAmount"></param>
+    /// <param name="fillOrigin">对齐方式（顶点位置）</param>
+    /// <param name="clockwise">是否逆时针</param>
+    /// <param name="imageType"></param>
+    /// <param name="vertexHelper"></param>
+    /// <param name="color"></param>
+    /// <exception cref="ArgumentOutOfRangeException"><see cref="ImageType"/> 超出范围</exception>
+    static void AddRectRadial360(Vector4 outer, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise,
+        ImageType imageType, VertexHelper vertexHelper, Color32 color)
+    {
+        // 中心，也是扇形圆心
+        var center = new Vector2(0.5f, 0.5f);
+        // 计算外部总顶点，顺序为逆时针
+        var vs = new Vector2[]
+        {
+            new Vector2(0.5f, 0),//0
+            new Vector2(1, 0),//1
+            new Vector2(1, 0.5f),//2
+            new Vector2(1, 1),//3
+            new Vector2(0.5f, 1),//4
+            new Vector2(0, 1),//5
+            new Vector2(0, 0.5f),//6
+            new Vector2(0, 0),//7
+        };
+
+        int CheckIndex(int i)
+        {
+            if (i < 0)
+            {
+                i += vs.Length;
+            }
+            else if (i >= vs.Length)
+            {
+                i %= vs.Length;
+            }
+
+            return i;
+        }
+
+        // 相交于边缘的位置
+        var crossPos = new Vector2();
+        // 默认-1，不相交。
+        float crossIndex = -1;
+
+        // 遍历时的索引步进，同时也作为计算时的符号翻转用的系数
+        var indexStep = clockwise ? 1 : -1;
+        var startIndex = 0;
+        var fill = 1 - fillAmount;
+        // 显示使用的顶点数（不含中心点），最大为8（因为头尾相接时要用两次）
+        var skipCount = Mathf.FloorToInt(fill / 0.125f);
+        var vCount = 8 - skipCount;
+        startIndex = fillOrigin * 2;
+        // 当角度为45度的整数倍时，不计算交点（因为交点就在8个顶点之中）
+        if (!Mathf.Approximately(fill % 0.125f, 0))
+        {
+            // fillOrigin: 0 bottom | 1 right | 2 top | 3 left
+            // 这里的fillOrigin指起始半径的位置
+            var radAngle = fill * 2 * Mathf.PI;
+            switch (fillOrigin)
+            {
+                // bottom
+                case 0:
+                    // ±45度
+                    if (fill < 0.125f || fill > 0.875f)
+                    {
+                        crossPos.x = 0.5f + 0.5f * Mathf.Tan(radAngle) * indexStep;
+                        crossPos.y = 0;
+                    }
+                    // 45 - 135度
+                    else if (fill > 0.125f && fill < 0.375f)
+                    {
+                        crossPos.x = 0.5f + 0.5f * indexStep;
+                        crossPos.y = 0.5f - 0.5f / Mathf.Tan(radAngle);
+                    }
+                    // 135 - 225度
+                    else if (fill > 0.375f && fill < 0.625f)
+                    {
+                        crossPos.y = 1;
+                        crossPos.x = 0.5f - 0.5f * Mathf.Tan(radAngle) * indexStep;
+                    }
+                    // 225 - 315度
+                    else if (fill > 0.625f && fill < 0.875f)
+                    {
+                        crossPos.x = 0.5f - 0.5f * indexStep;
+                        crossPos.y = 0.5f + 0.5f / Mathf.Tan(radAngle);
+                    }
+                    break;
+                // right
+                case 1:
+                    // ±45度
+                    if (fill < 0.125f || fill > 0.875f)
+                    {
+                        crossPos.x = 1;
+                        crossPos.y = 0.5f + 0.5f * Mathf.Tan(radAngle) * indexStep;
+                    }
+                    // 45 - 135度
+                    else if (fill > 0.125f && fill < 0.375f)
+                    {
+                        crossPos.x = 0.5f + 0.5f / Mathf.Tan(radAngle);
+                        crossPos.y = indexStep;
+                    }
+                    // 135 - 225度
+                    else if (fill > 0.375f && fill < 0.625f)
+                    {
+                        crossPos.y = 0.5f - 0.5f * Mathf.Tan(radAngle) * indexStep;
+                        crossPos.x = 0;
+                    }
+                    // 225 - 315度
+                    else if (fill > 0.625f && fill < 0.875f)
+                    {
+                        crossPos.x = 0.5f - 0.5f / Mathf.Tan(radAngle);
+                        crossPos.y = 0.5f - 0.5f * indexStep;
+                    }
+                    break;
+                // top
+                case 2:
+                    // ±45度
+                    if (fill < 0.125f || fill > 0.875f)
+                    {
+                        crossPos.x = 0.5f - 0.5f * Mathf.Tan(radAngle) * indexStep;
+                        crossPos.y = 1;
+                    }
+                    // 45 - 135度
+                    else if (fill > 0.125f && fill < 0.375f)
+                    {
+                        crossPos.x = 0.5f - 0.5f * indexStep;
+                        crossPos.y = 0.5f + 0.5f / Mathf.Tan(radAngle);
+                    }
+                    // 135 - 225度
+                    else if (fill > 0.375f && fill < 0.625f)
+                    {
+                        crossPos.y = 0;
+                        crossPos.x = 0.5f + 0.5f * Mathf.Tan(radAngle) * indexStep;
+                    }
+                    // 225 - 315度
+                    else if (fill > 0.625f && fill < 0.875f)
+                    {
+                        crossPos.x = 0.5f + 0.5f * indexStep;
+                        crossPos.y = 0.5f - 0.5f / Mathf.Tan(radAngle);
+                    }
+                    break;
+                // left
+                case 3:
+                    // ±45度
+                    if (fill < 0.125f || fill > 0.875f)
+                    {
+                        crossPos.x = 0;
+                        crossPos.y = 0.5f - 0.5f * Mathf.Tan(radAngle) * indexStep;
+                    }
+                    // 45 - 135度
+                    else if (fill > 0.125f && fill < 0.375f)
+                    {
+                        crossPos.x = 0.5f - 0.5f / Mathf.Tan(radAngle);
+                        crossPos.y = 0.5f - 0.5f * indexStep;
+                    }
+                    // 135 - 225度
+                    else if (fill > 0.375f && fill < 0.625f)
+                    {
+                        crossPos.y = 0.5f + 0.5f * Mathf.Tan(radAngle) * indexStep;
+                        crossPos.x = 1;
+                    }
+                    // 225 - 315度
+                    else if (fill > 0.625f && fill < 0.875f)
+                    {
+                        crossPos.x = 0.5f + 0.5f / Mathf.Tan(radAngle);
+                        crossPos.y = 0.5f + 0.5f * indexStep;
+                    }
+                    break;
+            }
+            
+            // 计算索引
+            crossIndex = startIndex + (skipCount + 0.5f) * indexStep;
+            if (crossIndex >= vs.Length)
+            {
+                crossIndex %= vs.Length;
+            }
+            else if (crossIndex < 0)
+            {
+                crossIndex += vs.Length;
+            }
+
+            startIndex = CheckIndex(clockwise ? Mathf.CeilToInt(crossIndex) : Mathf.FloorToInt(crossIndex));
+        }
+        else
+        {
+            vCount = 9 - (int)(fill / 0.125f + 0.1f);
+            startIndex = CheckIndex(startIndex + skipCount * indexStep);
+        }
+
+        // Debug.Log($"<color=yellow> fillAmount: {fillAmount}, vCount: {vCount}, startIndex: {startIndex}, skipCount: {skipCount}, step: {indexStep}, tan θ: {Mathf.Tan(fill * 2 * Mathf.PI)}, crossIndex: {crossIndex}, cross pos: {crossPos} </color>");
+        // 5: 0-1, 4: 0.5-1, 6:0-0.5
+        switch (imageType)
+        {
+            case ImageType.TopHalf:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[5], vs[4], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, vs[5], crossPos.y > 0.5f ? vs[4] : vs[6], false, crossPos.y <= 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, vs[5], v.y > 0.5f ? vs[4] : vs[6], false, v.y <= 0.5f));
+                    j++;
+                }
+                break;
+            case ImageType.BottomHalf:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[5], vs[6], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, vs[5], crossPos.y > 0.5f ? vs[4] : vs[6], false, crossPos.y > 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, vs[5], v.y > 0.5f ? vs[4] : vs[6], false, v.y > 0.5f));
+                    j++;
+                }
+                break;
+            case ImageType.RightHalf:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[4], vs[5], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], vs[5], crossPos.x <= 0.5f, false));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], vs[5], v.x <= 0.5f, false));
+                    j++;
+                }
+                break;
+            case ImageType.LeftHalf:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[6], vs[5], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], vs[5], crossPos.x > 0.5f, false));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], vs[5], v.x > 0.5f, false));
+                    j++;
+                }
+                break;
+            case ImageType.TopRight:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[4], vs[4], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], crossPos.y > 0.5f ? vs[4] : vs[6], crossPos.x <= 0.5f, crossPos.y <= 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], v.y > 0.5f ? vs[4] : vs[6], v.x <= 0.5f, v.y <= 0.5f));
+                    j++;
+                }
+                break;
+            case ImageType.BottomRight:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[4], vs[6], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], crossPos.y > 0.5f ? vs[4] : vs[6], crossPos.x <= 0.5f, crossPos.y > 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+                    
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], v.y > 0.5f ? vs[4] : vs[6], v.x <= 0.5f, v.y > 0.5f));
+                    j++;
+                }
+                break;
+            case ImageType.TopLeft:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[6], vs[4], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], crossPos.y > 0.5f ? vs[4] : vs[6], crossPos.x > 0.5f, crossPos.y <= 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], v.y > 0.5f ? vs[4] : vs[6], v.x > 0.5f, v.y <= 0.5f));
+                    j++;
+                }
+                break;
+            case ImageType.BottomLeft:
+                vertexHelper.AddVert(GetUIVertex(color, center, v1, outer, vs[6], vs[6], false, false));
+                if (crossIndex > 0) vertexHelper.AddVert(GetUIVertex(color, crossPos, v1, outer, crossPos.x > 0.5f ? vs[4] : vs[6], crossPos.y > 0.5f ? vs[4] : vs[6], crossPos.x > 0.5f, crossPos.y > 0.5f));
+                for (int i = startIndex, j = 0; j < vCount; i += indexStep)
+                {
+                    i = CheckIndex(i);
+
+                    var v = vs[i];
+
+                    vertexHelper.AddVert(GetUIVertex(color, v, v1, outer, v.x > 0.5f ? vs[4] : vs[6], v.y > 0.5f ? vs[4] : vs[6], v.x > 0.5f, v.y > 0.5f));
+                    j++;
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(imageType), imageType, null);
+        }
+        
+        // 添加三角形
+        var vertCount = vertexHelper.currentVertCount;
+        for (int i = 2; i < vertCount; i++)
+        {
+            vertexHelper.AddTriangle(0, i - 1, i);
         }
     }
     
