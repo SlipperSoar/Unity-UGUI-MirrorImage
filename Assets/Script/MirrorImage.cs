@@ -1185,127 +1185,11 @@ public class MirrorImage : Image
             case FillMethod.Radial180:
             {
                 AddRectRadial180(outer, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
-                for (int side = 0; side < 2; ++side)
-                {
-                    float fx0, fx1, fy0, fy1;
-                    int even = fillOrigin > 1 ? 1 : 0;
-
-                    if (fillOrigin == 0 || fillOrigin == 2)
-                    {
-                        fy0 = 0f;
-                        fy1 = 1f;
-                        if (side == even)
-                        {
-                            fx0 = 0f;
-                            fx1 = 0.5f;
-                        }
-                        else
-                        {
-                            fx0 = 0.5f;
-                            fx1 = 1f;
-                        }
-                    }
-                    else
-                    {
-                        fx0 = 0f;
-                        fx1 = 1f;
-                        if (side == even)
-                        {
-                            fy0 = 0.5f;
-                            fy1 = 1f;
-                        }
-                        else
-                        {
-                            fy0 = 0f;
-                            fy1 = 0.5f;
-                        }
-                    }
-
-                    s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
-                    s_Xy[1].x = s_Xy[0].x;
-                    s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
-                    s_Xy[3].x = s_Xy[2].x;
-
-                    s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
-                    s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
-                    s_Xy[2].y = s_Xy[1].y;
-                    s_Xy[3].y = s_Xy[0].y;
-
-                    s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
-                    s_Uv[1].x = s_Uv[0].x;
-                    s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
-                    s_Uv[3].x = s_Uv[2].x;
-
-                    s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
-                    s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
-                    s_Uv[2].y = s_Uv[1].y;
-                    s_Uv[3].y = s_Uv[0].y;
-
-                    float val = fillClockwise ? fillAmount * 2f - side : fillAmount * 2f - (1 - side);
-
-                    if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((side + fillOrigin + 3) % 4)))
-                    {
-                        AddQuad(toFill, s_Xy, color, s_Uv);
-                    }
-                }
             }
                 break;
             case FillMethod.Radial360:
             {
                 AddRectRadial360(outer, v1, fillAmount, fillOrigin, fillClockwise, imageResourceType, toFill, color);
-                // for (int corner = 0; corner < 4; ++corner)
-                // {
-                //     float fx0, fx1, fy0, fy1;
-                //
-                //     if (corner < 2)
-                //     {
-                //         fx0 = 0f;
-                //         fx1 = 0.5f;
-                //     }
-                //     else
-                //     {
-                //         fx0 = 0.5f;
-                //         fx1 = 1f;
-                //     }
-                //
-                //     if (corner == 0 || corner == 3)
-                //     {
-                //         fy0 = 0f;
-                //         fy1 = 0.5f;
-                //     }
-                //     else
-                //     {
-                //         fy0 = 0.5f;
-                //         fy1 = 1f;
-                //     }
-                //
-                //     s_Xy[0].x = Mathf.Lerp(v.x, v.z, fx0);
-                //     s_Xy[1].x = s_Xy[0].x;
-                //     s_Xy[2].x = Mathf.Lerp(v.x, v.z, fx1);
-                //     s_Xy[3].x = s_Xy[2].x;
-                //
-                //     s_Xy[0].y = Mathf.Lerp(v.y, v.w, fy0);
-                //     s_Xy[1].y = Mathf.Lerp(v.y, v.w, fy1);
-                //     s_Xy[2].y = s_Xy[1].y;
-                //     s_Xy[3].y = s_Xy[0].y;
-                //
-                //     s_Uv[0].x = Mathf.Lerp(tx0, tx1, fx0);
-                //     s_Uv[1].x = s_Uv[0].x;
-                //     s_Uv[2].x = Mathf.Lerp(tx0, tx1, fx1);
-                //     s_Uv[3].x = s_Uv[2].x;
-                //
-                //     s_Uv[0].y = Mathf.Lerp(ty0, ty1, fy0);
-                //     s_Uv[1].y = Mathf.Lerp(ty0, ty1, fy1);
-                //     s_Uv[2].y = s_Uv[1].y;
-                //     s_Uv[3].y = s_Uv[0].y;
-                //
-                //     float val = fillClockwise ?
-                //         fillAmount * 4f - ((corner + fillOrigin) % 4) :
-                //         fillAmount * 4f - (3 - ((corner + fillOrigin) % 4));
-                //
-                //     if (RadialCut(s_Xy, s_Uv, Mathf.Clamp01(val), fillClockwise, ((corner + 2) % 4)))
-                //         AddQuad(toFill, s_Xy, color, s_Uv);
-                // }
             }
                 break;
         }
@@ -1956,159 +1840,345 @@ public class MirrorImage : Image
     static void AddRectRadial180(Vector4 outer, Vector4 v1, float fillAmount, int fillOrigin, bool clockwise,
         ImageType imageType, VertexHelper vertexHelper, Color32 color)
     {
-        // 先计算外部总顶点
-        var outerPoses = new Vector2[]
+        // 计算外部总顶点，顺序为逆时针，底部中点为起点
+        var vs = new Vector2[]
         {
-            Vector2.zero,
-            new Vector2(0, 1),
-            Vector2.one,
-            new Vector2(1, 0)
+            new Vector2(0, 0),//0
+            new Vector2(0, 1),//1
+            new Vector2(1, 1),//2
+            new Vector2(1, 0),//3
         };
+        
+        // 矩形列表
+        var rects = new List<Vector2[]>();
+
+        var fill = 1 - fillAmount;
         // fillOrigin: 0 bottom | 1 left | 2 top | 3 right
         // 这里的fillOrigin指圆心位置
-        var radAngle = (1 - fillAmount) * Mathf.PI;
-        // TODO: 计算外部的所有顶点
-        switch (fillOrigin)
+        var radAngle = fill * Mathf.PI;
+        if (!Mathf.Approximately(fill % 0.5f, 0))
         {
-            // bottom left
-            case 0:
-                if (clockwise)
+            // TODO: 计算外部的所有顶点
+            // 先按照逆时针方向计算（勾上clockwise），然后再根据情况翻转
+            switch (fillOrigin)
+            {
+                // bottom
+                case 0:
                 {
-                    // 45度
-                    if (fillAmount > 0.5f)
+                    if (fill >= 0.5f)
                     {
-                        outerPoses[3].y = Mathf.Tan(radAngle);
+                        radAngle -= Mathf.PI / 2;
+                        var rect = new[] { vs[0], vs[1], new Vector2(0.5f, 1), new Vector2(0.5f, 0) };
+
+                        rect[2].x -= Mathf.Tan(radAngle);
+                        if (rect[2].x < 0)
+                        {
+                            rect[2].x = rect[1].x;
+                            rect[2].y = rect[1].y = 0.5f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rect = MirrorRect(rect, xAxis: 0.5f);
+                        }
+                        
+                        rects.Add(rect);
                     }
                     else
                     {
-                        outerPoses[3].y = 1;
-                        outerPoses[3].x = outerPoses[2].x = 1 / Mathf.Tan(radAngle);
+                        var leftRect = new[] { vs[0], vs[1], new Vector2(0.5f, 1), new Vector2(0.5f, 0) };
+                        var rightRect = new[] { new Vector2(0.5f, 0), new Vector2(0.5f, 1), vs[2], vs[3] };
+                        
+                        rightRect[3].y += 0.5f * Mathf.Tan(radAngle);
+                        if (rightRect[3].y > 1)
+                        {
+                            rightRect[3].y = rightRect[2].y;
+                            rightRect[3].x = rightRect[2].x = rightRect[1].x + 1f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rightRect = MirrorRect(rightRect, xAxis: 0.5f);
+                            leftRect = MirrorRect(leftRect, xAxis: 0.5f);
+                        }
+
+                        rects.Add(rightRect);
+                        rects.Add(leftRect);
                     }
                 }
-                else
+                    break;
+                // left
+                case 1:
                 {
-                    // 45度
-                    if (fillAmount > 0.5f)
+                    if (fill >= 0.5f)
                     {
-                        outerPoses[1].x = Mathf.Tan(radAngle);
+                        radAngle -= Mathf.PI / 2;
+                        var rect = new[] { new Vector2(0, 0.5f), vs[1], vs[2], new Vector2(1, 0.5f) };
+
+                        rect[3].y += Mathf.Tan(radAngle);
+                        if (rect[3].y > 1)
+                        {
+                            rect[3].y = rect[2].y;
+                            rect[3].x = rect[2].x = rect[1].x + 0.5f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rect = MirrorRect(rect, yAxis: 0.5f);
+                        }
+                        
+                        rects.Add(rect);
                     }
                     else
                     {
-                        outerPoses[1].x = 1;
-                        outerPoses[1].y = outerPoses[2].y = 1 / Mathf.Tan(radAngle);
+                        var bottomRect = new[] { vs[0], new Vector2(0, 0.5f), new Vector2(1, 0.5f), vs[3] };
+                        var topRect = new[] { new Vector2(0, 0.5f), vs[1], vs[2], new Vector2(1, 0.5f) };
+                        
+                        bottomRect[0].x += 0.5f * Mathf.Tan(radAngle);
+                        if (bottomRect[0].x > 1)
+                        {
+                            bottomRect[0].x = bottomRect[3].x;
+                            bottomRect[0].y = bottomRect[3].y = bottomRect[2].y - 1f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            topRect = MirrorRect(topRect, yAxis: 0.5f);
+                            bottomRect = MirrorRect(bottomRect, yAxis: 0.5f);
+                        }
+
+                        rects.Add(topRect);
+                        rects.Add(bottomRect);
                     }
                 }
-                break;
-            // top left
-            case 1:
-                if (clockwise)
+                    break;
+                // top
+                case 2:
                 {
-                    // 45度
-                    if (fillAmount > 0.5f)
+                    if (fill >= 0.5f)
                     {
-                        outerPoses[0].x = Mathf.Tan(radAngle);
+                        radAngle -= Mathf.PI / 2;
+                        var rect = new[] { new Vector2(0.5f, 0), new Vector2(0.5f, 1), vs[2], vs[3] };
+
+                        rect[0].x += Mathf.Tan(radAngle);
+                        if (rect[0].x > 1)
+                        {
+                            rect[0].x = rect[3].x;
+                            rect[0].y = rect[3].y = rect[2].y - 0.5f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rect = MirrorRect(rect, xAxis: 0.5f);
+                        }
+                        
+                        rects.Add(rect);
                     }
                     else
                     {
-                        outerPoses[0].x = 1;
-                        outerPoses[0].y = outerPoses[3].y = 1 - 1 / Mathf.Tan(radAngle);
+                        var leftRect = new[] { vs[0], vs[1], new Vector2(0.5f, 1), new Vector2(0.5f, 0) };
+                        var rightRect = new[] { new Vector2(0.5f, 0), new Vector2(0.5f, 1), vs[2], vs[3] };
+                        
+                        leftRect[1].y -= 0.5f * Mathf.Tan(radAngle);
+                        if (leftRect[1].y < 0)
+                        {
+                            leftRect[1].y = leftRect[0].y;
+                            leftRect[1].x = leftRect[0].x = leftRect[3].x - 1f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rightRect = MirrorRect(rightRect, xAxis: 0.5f);
+                            leftRect = MirrorRect(leftRect, xAxis: 0.5f);
+                        }
+
+                        rects.Add(rightRect);
+                        rects.Add(leftRect);
                     }
                 }
-                else
+                    break;
+                // right
+                case 3:
                 {
-                    // 45度
-                    if (fillAmount > 0.5f)
+                    if (fill >= 0.5f)
                     {
-                        outerPoses[2].y = 1 - Mathf.Tan(radAngle);
+                        radAngle -= Mathf.PI / 2;
+                        var rect = new[] { vs[0], new Vector2(0, 0.5f), new Vector2(1, 0.5f), vs[3] };
+
+                        rect[1].y -= Mathf.Tan(radAngle);
+                        if (rect[1].y < 0)
+                        {
+                            rect[1].y = rect[0].y;
+                            rect[1].x = rect[0].x = rect[3].x - 0.5f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            rect = MirrorRect(rect, yAxis: 0.5f);
+                        }
+                        
+                        rects.Add(rect);
                     }
                     else
                     {
-                        outerPoses[2].y = 0;
-                        outerPoses[2].x = outerPoses[3].x = 1 / Mathf.Tan(radAngle);
+                        var bottomRect = new[] { vs[0], new Vector2(0, 0.5f), new Vector2(1, 0.5f), vs[3] };
+                        var topRect = new[] { new Vector2(0, 0.5f), vs[1], vs[2], new Vector2(1, 0.5f) };
+                        
+                        topRect[2].x -= 0.5f * Mathf.Tan(radAngle);
+                        if (topRect[2].x < 0)
+                        {
+                            topRect[2].x = topRect[1].x;
+                            topRect[2].y = topRect[1].y = topRect[0].y + 1f / Mathf.Tan(radAngle);
+                        }
+
+                        if (!clockwise)
+                        {
+                            topRect = MirrorRect(topRect, yAxis: 0.5f);
+                            bottomRect = MirrorRect(bottomRect, yAxis: 0.5f);
+                        }
+
+                        rects.Add(topRect);
+                        rects.Add(bottomRect);
                     }
                 }
-                break;
-            // top right
-            case 2:
-                if (clockwise)
-                {
-                    // 45度
-                    if (fillAmount > 0.5f)
-                    {
-                        outerPoses[1].y = 1 - Mathf.Tan(radAngle);
-                    }
-                    else
-                    {
-                        outerPoses[1].y = 0;
-                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
-                    }
-                }
-                else
-                {
-                    // 45度
-                    if (fillAmount > 0.5f)
-                    {
-                        outerPoses[3].x = 1 - Mathf.Tan(radAngle);
-                    }
-                    else
-                    {
-                        outerPoses[3].x = 0;
-                        outerPoses[3].y = outerPoses[0].y = 1 - 1 / Mathf.Tan(radAngle);
-                    }
-                }
-                break;
-            // bottom right
-            case 3:
-                if (clockwise)
-                {
-                    // 45度
-                    if (fillAmount > 0.5f)
-                    {
-                        outerPoses[2].x = 1 - Mathf.Tan(radAngle);
-                    }
-                    else
-                    {
-                        outerPoses[2].x = 0;
-                        outerPoses[2].y = outerPoses[1].y = 1 / Mathf.Tan(radAngle);
-                    }
-                }
-                else
-                {
-                    // 45度
-                    if (fillAmount > 0.5f)
-                    {
-                        outerPoses[0].y = Mathf.Tan(radAngle);
-                    }
-                    else
-                    {
-                        outerPoses[0].y = 1;
-                        outerPoses[0].x = outerPoses[1].x = 1 - 1 / Mathf.Tan(radAngle);
-                    }
-                }
-                break;
+                    break;
+            }
         }
 
+        var leftHalfRange = new Vector2(0, 0.5f);
+        var rightHalfRange = new Vector2(0.5f, 1);
+        var allRange = new Vector2(0, 1);
+        
+        // 固定以左 -> 右， 下 -> 上， 左下 -> 右下 -> 左上 -> 右上 的顺序（先上下分，再左右分）
         switch (imageType)
         {
             case ImageType.TopHalf:
-                break;
             case ImageType.BottomHalf:
+            {
+                var verticalRevert = imageType == ImageType.BottomHalf;
+                for (var i = 0; i < rects.Count; i++)
+                {
+                    var rect = rects[i];
+                    var divideRects = DivideRect(rect, false, true, out var isRevertX, out var isRevertY);
+                    // top
+                    AddTriangle(divideRects[isRevertY ? 0 : 1], vertexHelper, color, v1, outer, allRange, rightHalfRange, false, verticalRevert);
+                    // bottom
+                    AddTriangle(divideRects[isRevertY ? 1 : 0], vertexHelper, color, v1, outer, allRange, leftHalfRange, false, !verticalRevert);
+                }
+            }
                 break;
             case ImageType.RightHalf:
-                break;
             case ImageType.LeftHalf:
+            {
+                var horizontalRevert = imageType == ImageType.RightHalf;
+                for (var i = 0; i < rects.Count; i++)
+                {
+                    var rect = rects[i];
+                    var divideRects = DivideRect(rect, true, false, out var isRevertX, out var isRevertY);
+                    // left
+                    AddTriangle(divideRects[isRevertX[0] ? 1 : 0], vertexHelper, color, v1, outer, leftHalfRange, allRange, horizontalRevert, false);
+                    // right
+                    AddTriangle(divideRects[isRevertX[0] ? 0 : 1], vertexHelper, color, v1, outer, rightHalfRange, allRange, !horizontalRevert, false);
+                }
+            }
                 break;
             case ImageType.TopRight:
-                break;
             case ImageType.BottomRight:
-                break;
             case ImageType.TopLeft:
-                break;
             case ImageType.BottomLeft:
+            {
+                var verticalRevert = imageType == ImageType.BottomRight || imageType == ImageType.BottomLeft;
+                var horizontalRevert = imageType == ImageType.BottomRight || imageType == ImageType.TopRight;
+                for (var i = 0; i < rects.Count; i++)
+                {
+                    var rect = rects[i];
+                    var divideRects = DivideRect(rect, true, true, out var isRevertX, out var isRevertY);
+                    // 当y翻转时，0 1为上， 2 3为下，当x翻转时，+0为右， +1为左
+                    var topStartIndex = isRevertY ? 0 : 2;
+                    var bottomStartIndex = isRevertY ? 2 : 0;
+                    var isTopXRevert = isRevertY ? isRevertX[0] : isRevertX[1];
+                    var isBottomXRevert = isRevertY ? isRevertX[1] : isRevertX[0];
+                    // top right
+                    AddTriangle(divideRects[topStartIndex + (isTopXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightHalfRange, rightHalfRange, !horizontalRevert, verticalRevert);
+                    // bottom right
+                    AddTriangle(divideRects[bottomStartIndex + (isBottomXRevert ? 0 : 1)], vertexHelper, color, v1, outer, rightHalfRange, leftHalfRange, !horizontalRevert, !verticalRevert);
+                    // top left
+                    AddTriangle(divideRects[topStartIndex + (isTopXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftHalfRange, rightHalfRange, horizontalRevert, verticalRevert);
+                    // bottom left
+                    AddTriangle(divideRects[bottomStartIndex + (isBottomXRevert ? 1 : 0)], vertexHelper, color, v1, outer, leftHalfRange, leftHalfRange, horizontalRevert, !verticalRevert);
+                }
+            }
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(imageType), imageType, null);
         }
+    }
+
+    /// <summary>
+    /// 翻转矩形
+    /// </summary>
+    /// <param name="rect">原始矩形</param>
+    /// <param name="isHorizontal">是否是水平反转</param>
+    /// <returns></returns>
+    static Vector2[] FlipRect(Vector2[] rect, bool isHorizontal)
+    {
+        var result = new Vector2[4];
+        if (isHorizontal)
+        {
+            result[0] = rect[3];
+            result[1] = rect[2];
+            result[2] = rect[1];
+            result[3] = rect[0];
+        }
+        else
+        {
+            result[0] = rect[1];
+            result[1] = rect[0];
+            result[2] = rect[3];
+            result[3] = rect[2];
+        }
+
+        return result;
+    }
+    
+    /// <summary>
+    /// 按照轴来镜像矩形
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="xAxis">x镜像轴</param>
+    /// <param name="yAxis">y镜像轴</param>
+    /// <returns></returns>
+    static Vector2[] MirrorRect(Vector2[] rect, float? xAxis = null, float? yAxis = null)
+    {
+        if (!xAxis.HasValue && !yAxis.HasValue)
+        {
+            return rect;
+        }
+        
+        var result = rect;
+        if (xAxis.HasValue)
+        {
+            // 确保顶点顺序正确（左下起的顺时针）
+            result = FlipRect(rect, true);
+            var x = xAxis.Value;
+            for (int i = 0; i < 4; i++)
+            {
+                result[i].x = x + x - result[i].x;
+            }
+        }
+
+        if (yAxis.HasValue)
+        {
+            // 确保顶点顺序正确（左下起的顺时针）
+            result = FlipRect(result, false);
+            var y = yAxis.Value;
+            for (int i = 0; i < 4; i++)
+            {
+                result[i].y = y + y - result[i].y;
+            }
+        }
+
+        return result;
     }
     
     /// <summary>
@@ -2128,7 +2198,7 @@ public class MirrorImage : Image
     {
         // 中心，也是扇形圆心
         var center = new Vector2(0.5f, 0.5f);
-        // 计算外部总顶点，顺序为逆时针
+        // 计算外部总顶点，顺序为逆时针，底部中点为起点
         var vs = new Vector2[]
         {
             new Vector2(0.5f, 0),//0
@@ -2422,117 +2492,6 @@ public class MirrorImage : Image
         for (int i = 2; i < vertCount; i++)
         {
             vertexHelper.AddTriangle(0, i - 1, i);
-        }
-    }
-    
-    /// <summary>
-    /// Adjust the specified quad, making it be radially filled instead.
-    /// </summary>
-    /// <param name="xy">顶点</param>
-    /// <param name="uv">uv</param>
-    /// <param name="fill">显示的内容量 百分比</param>
-    /// <param name="invert">是否顺时针</param>
-    /// <param name="corner">对齐方式</param>
-    static bool RadialCut(Vector3[] xy, Vector3[] uv, float fill, bool invert, int corner)
-    {
-        // Nothing to fill
-        if (fill < 0.001f) return false;
-
-        // Even corners invert the fill direction
-        if ((corner & 1) == 1) invert = !invert;
-
-        // Nothing to adjust
-        if (!invert && fill > 0.999f) return true;
-
-        // Convert 0-1 value into 0 to 90 degrees angle in radians
-        float angle = Mathf.Clamp01(fill);
-        if (invert) angle = 1f - angle;
-        angle *= 90f * Mathf.Deg2Rad;
-
-        // Calculate the effective X and Y factors
-        float cos = Mathf.Cos(angle);
-        float sin = Mathf.Sin(angle);
-
-        RadialCut(xy, cos, sin, invert, corner);
-        RadialCut(uv, cos, sin, invert, corner);
-        return true;
-    }
-
-    /// <summary>
-    /// Adjust the specified quad, making it be radially filled instead.
-    /// </summary>
-    static void RadialCut(Vector3[] xy, float cos, float sin, bool invert, int corner)
-    {
-        int i0 = corner;
-        int i1 = ((corner + 1) % 4);
-        int i2 = ((corner + 2) % 4);
-        int i3 = ((corner + 3) % 4);
-
-        if ((corner & 1) == 1)
-        {
-            if (sin > cos)
-            {
-                cos /= sin;
-                sin = 1f;
-
-                if (invert)
-                {
-                    xy[i1].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
-                    xy[i2].x = xy[i1].x;
-                }
-            }
-            else if (cos > sin)
-            {
-                sin /= cos;
-                cos = 1f;
-
-                if (!invert)
-                {
-                    xy[i2].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
-                    xy[i3].y = xy[i2].y;
-                }
-            }
-            else
-            {
-                cos = 1f;
-                sin = 1f;
-            }
-
-            if (!invert) xy[i3].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
-            else xy[i1].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
-        }
-        else
-        {
-            if (cos > sin)
-            {
-                sin /= cos;
-                cos = 1f;
-
-                if (!invert)
-                {
-                    xy[i1].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
-                    xy[i2].y = xy[i1].y;
-                }
-            }
-            else if (sin > cos)
-            {
-                cos /= sin;
-                sin = 1f;
-
-                if (invert)
-                {
-                    xy[i2].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
-                    xy[i3].x = xy[i2].x;
-                }
-            }
-            else
-            {
-                cos = 1f;
-                sin = 1f;
-            }
-
-            if (invert) xy[i3].y = Mathf.Lerp(xy[i0].y, xy[i2].y, sin);
-            else xy[i1].x = Mathf.Lerp(xy[i0].x, xy[i2].x, cos);
         }
     }
 }
